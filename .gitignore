@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/django
 # Edit at https://www.toptal.com/developers/gitignore?templates=django
 
+# No need to save migrations, when database isn't saved anywhere
+migrations/ 
+
 ### Django ###
 *.log
 *.pot
