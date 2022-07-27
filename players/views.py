@@ -1,3 +1,5 @@
+import json
+
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -22,9 +24,11 @@ class TeamViewSet(viewsets.ModelViewSet):
         team_sheet_pk = request.data["player_team_sheet"]
         team_sheet = TeamSheet.objects.get(id=team_sheet_pk)
         if int(pk) != team_sheet.team.id:
-            raise ValueError(f"Team_sheet({team_sheet_pk}) doesn't belong to team({team_sheet.team.id})!")
+            raise ValueError(
+                f"Team_sheet({team_sheet_pk}) doesn't belong to team({team_sheet.team.id})!"
+            )
         match_result = play_match_against_ai(team_sheet, ai_average_overall)
-        return Response({"Player": match_result.home_score, "Ai": match_result.away_score})
+        return Response(match_result)
 
 
 class TeamSheetViewSet(viewsets.ModelViewSet):

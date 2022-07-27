@@ -18,9 +18,7 @@ class Team(models.Model):
 
 class Player(models.Model):
     name = models.CharField(max_length=128)
-    preferred_position = models.CharField(
-        choices=PlayerPosition.choices, max_length=32
-    )
+    preferred_position = models.CharField(choices=PlayerPosition.choices, max_length=32)
     current_team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     overall = models.IntegerField(
         default=1, validators=[MinValueValidator(1), MaxValueValidator(99)]
@@ -34,11 +32,21 @@ class TeamSheet(models.Model):
     name = models.CharField(max_length=128)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
-    right_attacker = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="right_attacker")
-    left_attacker = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="left_attacker")
-    right_defender = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="right_defender")
-    left_defender = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="left_defender")
-    goalkeeper = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="goalkeeper")
+    right_attacker = models.ForeignKey(
+        Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="right_attacker"
+    )
+    left_attacker = models.ForeignKey(
+        Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="left_attacker"
+    )
+    right_defender = models.ForeignKey(
+        Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="right_defender"
+    )
+    left_defender = models.ForeignKey(
+        Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="left_defender"
+    )
+    goalkeeper = models.ForeignKey(
+        Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="goalkeeper"
+    )
 
     def __str__(self):
         return self.name

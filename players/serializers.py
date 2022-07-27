@@ -38,7 +38,13 @@ class TeamSheetSerializer(serializers.ModelSerializer):
         return representation
 
     def validate(self, data):
-        positions = ['right_attacker', 'left_attacker', "right_defender", "left_defender", "goalkeeper"]
+        positions = [
+            "right_attacker",
+            "left_attacker",
+            "right_defender",
+            "left_defender",
+            "goalkeeper",
+        ]
         players = [data[position] for position in positions if data[position] is not None]
 
         if len(set(players)) != len(players):
@@ -47,5 +53,7 @@ class TeamSheetSerializer(serializers.ModelSerializer):
         team = data["team"]
         for player in players:
             if player.current_team != team:
-                raise serializers.ValidationError(f"Player {player} is not a player of team {player.current_team}")
+                raise serializers.ValidationError(
+                    f"Player {player} is not a player of team {player.current_team}"
+                )
         return data
