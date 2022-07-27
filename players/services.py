@@ -6,7 +6,15 @@ from typing import List
 
 
 @dataclass
-class Match:
+class MatchResult:
+    home_goals: int
+    away_goals: int
+    home_goals_minutes: List[int]
+    away_goals_minutes: List[int]
+
+
+@dataclass
+class _Match:
     home_average: int
     away_average: int
     home_goals: int = 0
@@ -14,14 +22,23 @@ class Match:
     home_goals_minutes: List[int] = dataclasses.field(default_factory=lambda: [])
     away_goals_minutes: List[int] = dataclasses.field(default_factory=lambda: [])
 
-    def play_match(self):
+    def play_match(self) -> MatchResult:
         # using min so that lower scores are more common
         goal_amount = min(random.randint(1, 12) for _ in range(3))
         for i in range(goal_amount):
             self._add_goal_to_score()
 
+        return self._create_match_result_from_score()
+
+    def _create_match_result_from_score(self) -> MatchResult:
         self.home_goals_minutes.sort()
         self.away_goals_minutes.sort()
+        return MatchResult(
+            home_goals=self.home_goals,
+            away_goals=self.away_goals,
+            home_goals_minutes=self.home_goals_minutes.copy(),
+            away_goals_minutes=self.away_goals_minutes.copy(),
+        )
 
     def _add_goal_to_score(self):
         home_goal_chance = 50 + round(self.home_average - self.away_average)
@@ -50,11 +67,13 @@ class Match:
         return random.randint(1, 90)
 
 
-def play_match_against_ai(player_team_sheet, ai_average_overall: int) -> dict:
+def play_match_against_ai(player_team_sheet, ai_average_overall) -> dict:
+    if type(ai_average_overall) != int or ai_average_overall not in range(1, 100):
+        raise ValueError("Average overall has to be a number between 1 and 100!")
     player_average = get_team_average_overall(player_team_sheet)
-    match = Match(player_average, ai_average_overall)
-    match.play_match()
-    return dataclasses.asdict(match)
+    match = _Match(player_average, ai_average_overall)
+    match_result = match.play_match()
+    return dataclasses.asdict(match_result)
 
 
 def get_team_average_overall(team_sheet) -> int:

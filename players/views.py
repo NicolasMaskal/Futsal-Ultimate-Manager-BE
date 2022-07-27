@@ -9,6 +9,10 @@ from .serializers import PlayerSerializer, TeamSerializer, TeamSheetSerializer
 from .services import play_match_against_ai
 
 
+def create_error_response(e: Exception) -> Response:
+    return Response({"error": True, "detail": str(e)}, status=400)
+
+
 class PlayerViewSet(viewsets.ModelViewSet):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
@@ -20,15 +24,18 @@ class TeamViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=["post"], name="Play a match against the ai")
     def play_match_ai(self, request, pk=None):
-        ai_average_overall = request.data["ai_average_overall"]
-        team_sheet_pk = request.data["player_team_sheet"]
-        team_sheet = TeamSheet.objects.get(id=team_sheet_pk)
-        if int(pk) != team_sheet.team.id:
-            raise ValueError(
-                f"Team_sheet({team_sheet_pk}) doesn't belong to team({team_sheet.team.id})!"
-            )
-        match_result = play_match_against_ai(team_sheet, ai_average_overall)
-        return Response(match_result)
+        try:
+            ai_average_overall = request.data["ai_average_overall"]
+            team_sheet_pk = request.data["player_team_sheet"]
+            team_sheet = TeamSheet.objects.get(id=team_sheet_pk)
+            if int(pk) != team_sheet.team.id:
+                raise ValueError(
+                    f"Team_sheet({team_sheet_pk}) doesn't belong to team({team_sheet.team.id})!"
+                )
+            match_result = play_match_against_ai(team_sheet, ai_average_overall)
+            return Response(match_result)
+        except Exception as e:
+            return create_error_response(e)
 
 
 class TeamSheetViewSet(viewsets.ModelViewSet):
@@ -51,4 +58,4 @@ class TeamSheetViewSet(viewsets.ModelViewSet):
             serializer_class.is_valid(raise_exception=True)
             return super().update(request, *args, **kwargs)
         except Exception as e:
-            return Response({"error": True, "detail": str(e)}, status=400)
+            return create_error_response(e)

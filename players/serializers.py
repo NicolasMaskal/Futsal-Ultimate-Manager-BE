@@ -48,12 +48,10 @@ class TeamSheetSerializer(serializers.ModelSerializer):
         players = [data[position] for position in positions if data[position] is not None]
 
         if len(set(players)) != len(players):
-            raise serializers.ValidationError("One player is playing in more than one position")
+            raise ValueError("One player is playing in more than one position")
 
         team = data["team"]
         for player in players:
             if player.current_team != team:
-                raise serializers.ValidationError(
-                    f"Player {player} is not a player of team {player.current_team}"
-                )
+                raise ValueError(f"Player {player} is not a player of team {player.current_team}")
         return data
