@@ -23,6 +23,13 @@ class Player(models.Model):
     overall = models.IntegerField(
         default=1, validators=[MinValueValidator(1), MaxValueValidator(99)]
     )
+    stamina_left = models.IntegerField(
+        default=99, validators=[MinValueValidator(0), MaxValueValidator(99)]
+    )
+
+    matches_played = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    goals_scored = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    assists_made = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
     def __str__(self):
         return self.name

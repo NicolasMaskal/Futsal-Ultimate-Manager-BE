@@ -2,7 +2,16 @@ import dataclasses
 from dataclasses import dataclass
 import random
 from .models import PlayerPosition
-from typing import List
+from typing import List, Optional
+from enum import Enum
+
+
+class TeamSheetPosition(Enum):
+    RIGHT_ATTACKER = "right_attacker"
+    LEFT_ATTACKER = "left_attacker"
+    RIGHT_DEFENDER = "right_defender"
+    LEFT_DEFENDER = "left_defender"
+    GOALKEEPER = "goalkeeper"
 
 
 @dataclass
@@ -67,7 +76,16 @@ class _Match:
         return random.randint(1, 90)
 
 
+def generate_goal_scorer() -> TeamSheetPosition:
+    pass
+
+
+def generate_assist_maker() -> Optional[TeamSheetPosition]:
+    pass
+
+
 def play_match_against_ai(player_team_sheet, ai_average_overall) -> dict:
+    # TODO Create dict team sheet that will be then updated
     if type(ai_average_overall) != int or ai_average_overall not in range(1, 100):
         raise ValueError("Average overall has to be a number between 1 and 100!")
     player_average = get_team_average_overall(player_team_sheet)
@@ -77,12 +95,11 @@ def play_match_against_ai(player_team_sheet, ai_average_overall) -> dict:
 
 
 def get_team_average_overall(team_sheet) -> int:
-    positions = ["right_attacker", "left_attacker", "right_defender", "left_defender", "goalkeeper"]
     player_amount = 0
     ovr_total = 0
 
-    for position in positions:
-        player = getattr(team_sheet, position)
+    for position in TeamSheetPosition:
+        player = getattr(team_sheet, position.value)
         if player:
             player_amount += 1
             ovr_total += get_player_ovr_in_position(player, position)
@@ -90,11 +107,11 @@ def get_team_average_overall(team_sheet) -> int:
     return round(ovr_total / player_amount) if player_amount != 0 else 0
 
 
-def get_player_ovr_in_position(player, position) -> int:
-    if position == PlayerPosition.GOALKEEPER:
-        return player.overall if player.preferred_position == position else 1
-    if player.preferred_position == PlayerPosition.GOALKEEPER:
+def get_player_ovr_in_position(player, position: TeamSheetPosition) -> int:
+    if position == TeamSheetPosition.GOALKEEPER:
+        return player.overall if player.preferred_position == TeamSheetPosition.GOALKEEPER.value else 1
+    if player.preferred_position == PlayerPosition.GOALKEEPER.value:
         return round(0.5 * player.overall)
 
-    multiplier = 1 if player.preferred_position in position else 0.75
+    multiplier = 1 if player.preferred_position in position.value else 0.75
     return round(multiplier * player.overall)
