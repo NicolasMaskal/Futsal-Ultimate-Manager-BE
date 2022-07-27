@@ -18,10 +18,10 @@ class Team(models.Model):
 
 class Player(models.Model):
     name = models.CharField(max_length=128)
-    position = models.CharField(
+    preferred_position = models.CharField(
         choices=PlayerPosition.choices, max_length=32
     )
-    current_team = models.ForeignKey(Team, on_delete=models.CASCADE, blank=True)
+    current_team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     overall = models.IntegerField(
         default=1, validators=[MinValueValidator(1), MaxValueValidator(99)]
     )
@@ -34,14 +34,11 @@ class TeamSheet(models.Model):
     name = models.CharField(max_length=128)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
 
+    right_attacker = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="right_attacker")
+    left_attacker = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="left_attacker")
+    right_defender = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="right_defender")
+    left_defender = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="left_defender")
+    goalkeeper = models.ForeignKey(Player, blank=True, null=True, on_delete=models.SET_NULL, related_name="goalkeeper")
+
     def __str__(self):
         return self.name
-
-
-class PlayerTeamSheetLocation(models.Model):
-    player = models.ForeignKey(Player, on_delete=models.CASCADE, blank=True)
-    index = models.IntegerField(default=1, validators=[MinValueValidator(0), MaxValueValidator(4)])
-    team_sheet = models.ForeignKey(TeamSheet, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.player}: {self.index} ({self.team_sheet.name})"

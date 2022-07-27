@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from players.models import Player, Team, TeamSheet, PlayerTeamSheetLocation
+from players.models import Player, Team, TeamSheet
+from .services import get_team_average_overall
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -21,6 +22,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
         team_sheets = TeamSheet.objects.filter(team=representation["id"]).all()
         representation["team_sheets"] = [team_sheet.id for team_sheet in team_sheets]
+
         return representation
 
 
@@ -28,12 +30,22 @@ class TeamSheetSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeamSheet
         fields = "__all__"
+        # read_only_fields = ('team',)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-
-        team_sheet_locs = PlayerTeamSheetLocation.objects.filter(team_sheet=representation["id"])
-        representation["player_locations"] = [
-            (team_sheet_loc.index, team_sheet_loc.player.id) for team_sheet_loc in team_sheet_locs
-        ]
+        representation["average_overall"] = get_team_average_overall(instance)
         return representation
+
+    def validate(self, data):
+        positions = ['right_attacker', 'left_attacker', "right_defender", "left_defender", "goalkeeper"]
+        players = [data[position] for position in positions if data[position] is not None]
+
+        if len(set(players)) != len(players):
+            raise serializers.ValidationError("One player is playing in more than one position")
+
+        team = data["team"]
+        for player in players:
+            if player.current_team != team:
+                raise serializers.ValidationError(f"Player {player} is not a player of team {player.current_team}")
+        return data

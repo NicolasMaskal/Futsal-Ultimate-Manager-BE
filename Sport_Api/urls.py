@@ -8,7 +8,7 @@ router = DefaultRouter()
 
 router.register("players", PlayerViewSet, "players")
 router.register("teams", TeamViewSet, "teams")
-router.register("team-sheets", TeamSheetViewSet, "nations")
+router.register("team-sheets", TeamSheetViewSet, "team-sheets")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
