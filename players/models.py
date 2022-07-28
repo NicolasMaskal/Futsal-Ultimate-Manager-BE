@@ -10,7 +10,7 @@ class PlayerPosition(models.TextChoices):
 
 class Team(models.Model):
     name = models.CharField(max_length=128)
-    owner = models.ForeignKey("auth.User", related_name="team", on_delete=models.CASCADE)  # new
+    owner = models.ForeignKey("auth.User", related_name="team", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -24,7 +24,7 @@ class Player(models.Model):
         default=1, validators=[MinValueValidator(1), MaxValueValidator(99)]
     )
     stamina_left = models.IntegerField(
-        default=99, validators=[MinValueValidator(0), MaxValueValidator(99)]
+        default=100, validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
 
     matches_played = models.IntegerField(default=0, validators=[MinValueValidator(0)])
@@ -57,3 +57,15 @@ class TeamSheet(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class MatchResult(models.Model):
+    player_team = models.ForeignKey(Team, related_name="team", on_delete=models.CASCADE)
+    player_score = models.IntegerField(validators=[MinValueValidator(0)])
+    cpu_score = models.IntegerField(validators=[MinValueValidator(0)])
+    cpu_average_overall = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(99)]
+    )
+
+    def __str__(self):
+        return f"{self.player_score} : {self.cpu_score} ({self.cpu_average_overall})"

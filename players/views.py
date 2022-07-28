@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .models import Player, Team, TeamSheet
 from .serializers import PlayerSerializer, TeamSerializer, TeamSheetSerializer
-from .services import play_match_against_ai
+from .services import play_match_against_cpu
 
 
 def create_error_response(e: Exception) -> Response:
@@ -32,7 +32,7 @@ class TeamViewSet(viewsets.ModelViewSet):
                 raise ValueError(
                     f"Team_sheet({team_sheet_pk}) doesn't belong to team({team_sheet.team.id})!"
                 )
-            match_result = play_match_against_ai(team_sheet, ai_average_overall)
+            match_result = play_match_against_cpu(team_sheet, ai_average_overall)
             return Response(match_result)
         except Exception as e:
             return create_error_response(e)
