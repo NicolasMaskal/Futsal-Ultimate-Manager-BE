@@ -60,6 +60,7 @@ class TeamSheet(models.Model):
 
 
 class MatchResult(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
     player_team = models.ForeignKey(Team, related_name="team", on_delete=models.CASCADE)
     player_score = models.IntegerField(validators=[MinValueValidator(0)])
     cpu_score = models.IntegerField(validators=[MinValueValidator(0)])

@@ -53,16 +53,7 @@ class TeamSheetManager:
     def __init__(self, team_sheet):
         self.team_sheet = team_sheet
 
-    def scored_goal(self) -> TeamSheetPosition:
-        #TODO Change to dict Missing assist makers
-        """
-        :return: Position of scorer
-        """
-        scorer_position = self._update_goal()
-        self._update_assist(scorer_position)
-        return scorer_position
-
-    def _update_goal(self) -> TeamSheetPosition:
+    def generate_scorer_update(self) -> TeamSheetPosition:
         """
         :return: Position of scorer
         """
@@ -71,7 +62,7 @@ class TeamSheetManager:
         player.goals_scored += 1
         return position
 
-    def _update_assist(self, scorer_position: TeamSheetPosition):
+    def generate_assister_update(self, scorer_position: TeamSheetPosition) -> Optional[TeamSheetPosition]:
         position = PositionManager.generate_assist_maker_position()
         while position == scorer_position:
             position = PositionManager.generate_assist_maker_position()
@@ -79,6 +70,7 @@ class TeamSheetManager:
         if position:
             player = getattr(self.team_sheet, position.value)
             player.assists_made += 1
+        return position
 
     def update_stamina(self):
         for position in PositionManager.positions:
@@ -168,8 +160,12 @@ class _Match:
             self._add_cpu_goal()
 
     def _add_player_goal(self):
-        scorer_pos = self.team_sheet_manager.scored_goal()
+        scorer_pos = self.team_sheet_manager.generate_scorer_update()
         self.player_goal_scorers.append(scorer_pos)
+
+        assister_pos = self.team_sheet_manager.generate_assister_update(scorer_pos)
+        if assister_pos:
+            self.player_assist_makers.append(assister_pos)
 
         self.player_goals += 1
         time_of_goal = self.generate_random_minute()
@@ -180,9 +176,11 @@ class _Match:
         time_of_goal = self.generate_random_minute()
         self.away_goals_minutes.append(time_of_goal)
 
-    @staticmethod
-    def generate_random_minute() -> int:
-        return random.randint(1, 90)
+    def generate_random_minute(self) -> int:
+        random_minute = random.randint(1, 90)
+        while random_minute in self.home_goals_minutes + self.away_goals_minutes:
+            random_minute = random.randint(1, 90)
+        return random_minute
 
 
 def get_team_average_overall(team_sheet, stamina_effect: bool = False) -> int:
