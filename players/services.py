@@ -140,6 +140,7 @@ class _Match:
         player_goal_scorers_str = [scorer.value for scorer in self.player_goal_scorers]
         player_assist_makers_str = [assister.value for assister in self.player_assist_makers]
         self.team_sheet_manager.match_finished()
+        self.update_team_with_result()
 
         return MatchResult(
             player_goals=self.player_goals,
@@ -181,6 +182,16 @@ class _Match:
         while random_minute in self.home_goals_minutes + self.away_goals_minutes:
             random_minute = random.randint(1, 90)
         return random_minute
+
+    def update_team_with_result(self):
+        team = self.team_sheet_manager.get_team()
+        if self.player_goals > self.cpu_goals:
+            team.wins += 1
+        elif self.player_goals == self.cpu_goals:
+            team.draws += 1
+        else:
+            team.loses += 1
+        team.save()
 
 
 def get_team_average_overall(team_sheet, stamina_effect: bool = False) -> int:

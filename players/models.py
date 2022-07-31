@@ -11,6 +11,9 @@ class PlayerPosition(models.TextChoices):
 class Team(models.Model):
     name = models.CharField(max_length=128)
     owner = models.ForeignKey("auth.User", related_name="team", on_delete=models.CASCADE)
+    wins = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    draws = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    loses = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
     def __str__(self):
         return self.name
