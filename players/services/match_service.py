@@ -99,6 +99,8 @@ class TeamSheetManager:
 
 @dataclass
 class MatchResult:
+    player_average_overall: int
+    cpu_average_overall: int
     player_goals: int
     cpu_goals: int
     player_goals_minutes: List[int]
@@ -109,13 +111,11 @@ class MatchResult:
 
 @dataclass
 class _Match:
-    home_average: int
-    away_average: int
+    player_average: int
+    cpu_average: int
     team_sheet_manager: TeamSheetManager
-    player_goals: int = 0
-    cpu_goals: int = 0
-    home_goals_minutes: List[int] = dataclasses.field(default_factory=lambda: [])
-    away_goals_minutes: List[int] = dataclasses.field(default_factory=lambda: [])
+    player_goals_minutes: List[int] = dataclasses.field(default_factory=lambda: [])
+    cpu_goals_minutes: List[int] = dataclasses.field(default_factory=lambda: [])
     player_goal_scorers: List[TeamSheetPosition] = dataclasses.field(default_factory=lambda: [])
     player_assist_makers: List[Optional[TeamSheetPosition]] = dataclasses.field(
         default_factory=lambda: []
@@ -130,13 +130,13 @@ class _Match:
         return self._create_match_result_from_score()
 
     def _create_match_result_from_score(self) -> MatchResult:
-        self.home_goals_minutes.sort()
-        self.away_goals_minutes.sort()
+        self.player_goals_minutes.sort()
+        self.cpu_goals_minutes.sort()
 
         models.MatchResult(
-            player_score=self.player_goals,
-            cpu_score=self.cpu_goals,
-            cpu_average_overall=self.away_average,
+            player_score=self.get_player_goal_amount(),
+            cpu_score=self.get_cpu_goal_amount(),
+            cpu_average_overall=self.cpu_average,
             player_team=self.team_sheet_manager.get_team(),
         ).save()
 
@@ -146,16 +146,18 @@ class _Match:
         self.update_team_with_result()
 
         return MatchResult(
-            player_goals=self.player_goals,
-            cpu_goals=self.cpu_goals,
-            player_goals_minutes=self.home_goals_minutes,
-            cpu_goals_minutes=self.away_goals_minutes,
+            player_average_overall=self.player_average,
+            cpu_average_overall=self.cpu_average,
+            player_goals=self.get_player_goal_amount(),
+            cpu_goals=self.get_cpu_goal_amount(),
+            player_goals_minutes=self.player_goals_minutes,
+            cpu_goals_minutes=self.cpu_goals_minutes,
             player_goal_scorers=player_goal_scorers_str,
             player_assist_makers=player_assist_makers_str,
         )
 
     def _add_goal_to_score(self):
-        player_goal_chance = 50 + round(self.home_average - self.away_average)
+        player_goal_chance = 50 + round(self.player_average - self.cpu_average)
 
         seed = random.randint(1, 100)
         if seed < player_goal_chance:
@@ -171,30 +173,36 @@ class _Match:
         if assister_pos:
             self.player_assist_makers.append(assister_pos)
 
-        self.player_goals += 1
         time_of_goal = self.generate_random_minute()
-        self.home_goals_minutes.append(time_of_goal)
+        self.player_goals_minutes.append(time_of_goal)
 
     def _add_cpu_goal(self):
-        self.cpu_goals += 1
         time_of_goal = self.generate_random_minute()
-        self.away_goals_minutes.append(time_of_goal)
+        self.cpu_goals_minutes.append(time_of_goal)
 
     def generate_random_minute(self) -> int:
         random_minute = random.randint(1, 90)
-        while random_minute in self.home_goals_minutes + self.away_goals_minutes:
+        while random_minute in self.player_goals_minutes + self.cpu_goals_minutes:
             random_minute = random.randint(1, 90)
         return random_minute
 
     def update_team_with_result(self):
         team = self.team_sheet_manager.get_team()
-        if self.player_goals > self.cpu_goals:
+        player_goals = self.get_player_goal_amount()
+        cpu_goals = self.get_cpu_goal_amount()
+        if player_goals > cpu_goals:
             team.wins += 1
-        elif self.player_goals == self.cpu_goals:
+        elif player_goals == cpu_goals:
             team.draws += 1
         else:
             team.loses += 1
         team.save()
+
+    def get_player_goal_amount(self) -> int:
+        return len(self.player_goals_minutes)
+
+    def get_cpu_goal_amount(self) -> int:
+        return len(self.cpu_goals_minutes)
 
 
 def play_match(player_team_sheet, player_average: int, cpu_average_overall: int) -> MatchResult:

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from players.models import Player, Team, TeamSheet
-from .services import get_team_average_overall
+from .services import team_service
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -16,6 +16,8 @@ class TeamSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+
+        representation["average_overall"] = team_service.get_team_average_overall(instance)
 
         players = Player.objects.filter(current_team=representation["id"]).all()
         representation["players"] = [player.id for player in players]
@@ -34,7 +36,7 @@ class TeamSheetSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["average_overall"] = get_team_average_overall(instance)
+        representation["average_overall"] = team_service.get_teamsheet_average_overall(instance)
         return representation
 
     def validate(self, data):

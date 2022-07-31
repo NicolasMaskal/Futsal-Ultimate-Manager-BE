@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from .models import Player, Team, TeamSheet
 from .serializers import PlayerSerializer, TeamSerializer, TeamSheetSerializer
-from .services import play_match_against_cpu
+from .services import team_service
 
 
 def create_error_response(e: Exception) -> Response:
@@ -25,14 +25,14 @@ class TeamViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], name="Play a match against the ai")
     def play_match_ai(self, request, pk=None):
         try:
-            ai_average_overall = request.data["ai_average_overall"]
+            difficulty = request.data["difficulty"]
             team_sheet_pk = request.data["player_team_sheet"]
             team_sheet = TeamSheet.objects.get(id=team_sheet_pk)
             if int(pk) != team_sheet.team.id:
                 raise ValueError(
                     f"Team_sheet({team_sheet_pk}) doesn't belong to team({team_sheet.team.id})!"
                 )
-            match_result = play_match_against_cpu(team_sheet, ai_average_overall)
+            match_result = team_service.play_match_against_cpu(team_sheet, difficulty)
             return Response(match_result)
         except Exception as e:
             return create_error_response(e)
