@@ -1,5 +1,20 @@
+from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+
+User._meta.get_field('email')._unique = True
+User._meta.get_field('email').blank = False
+User._meta.get_field('email').null = False
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 
 class PlayerPosition(models.TextChoices):
@@ -22,7 +37,7 @@ class Team(models.Model):
 class Player(models.Model):
     name = models.CharField(max_length=128)
     preferred_position = models.CharField(choices=PlayerPosition.choices, max_length=32)
-    current_team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     overall = models.IntegerField(
         default=1, validators=[MinValueValidator(1), MaxValueValidator(99)]
     )

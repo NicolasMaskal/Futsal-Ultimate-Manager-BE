@@ -36,7 +36,7 @@ def get_player_ovr_in_position(
 def get_team_average_overall(team) -> int:
     player_amount = 0
     ovr_total = 0
-    players = models.Player.objects.filter(current_team=team.id).all()
+    players = models.Player.objects.filter(team=team.id).all()
     for player in players:
         player_amount += 1
         ovr_total += player.overall
