@@ -57,3 +57,15 @@ def play_match_against_cpu(player_team_sheet, difficulty_rating: int) -> dict:
     cpu_average_overall = generate_cpu_overall(player_team_sheet.team, difficulty_rating)
     match_res = match_service.play_match(player_team_sheet, player_average, cpu_average_overall)
     return dataclasses.asdict(match_res)
+
+
+def get_match_results(team) -> list:
+    match_results = models.MatchResult.objects.filter(player_team=team)
+    return match_results
+
+
+def validate_teamsheet_team(team, team_sheet):
+    if team != team_sheet.team:
+        raise ValueError(
+            f"Team_sheet({team_sheet.id}) doesn't belong to team({team_sheet.team.id})!"
+        )

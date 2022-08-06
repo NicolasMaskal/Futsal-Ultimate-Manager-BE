@@ -3,13 +3,21 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from rest_framework import serializers
 from players.models import Player, Team, TeamSheet, MatchResult
-from .services import team_service
+from players.services import team_service, player_service
 
 
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
         fields = "__all__"
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        team_avg = team_service.get_team_average_overall(instance.team)
+        representation["sell_price"] = player_service.get_player_sell_price(
+            instance.overall, team_avg
+        )
+        return representation
 
 
 class MatchResultSerializer(serializers.ModelSerializer):
@@ -19,6 +27,7 @@ class MatchResultSerializer(serializers.ModelSerializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
+    # So that owner isn't a required field when creating a team (is automatically set in perform_create)
     owner = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
@@ -31,10 +40,12 @@ class TeamSerializer(serializers.ModelSerializer):
         representation["average_overall"] = team_service.get_team_average_overall(instance)
 
         players = Player.objects.filter(team=representation["id"]).all()
-        representation["players"] = [player.id for player in players]
+        representation["team_size"] = len(players)
 
         team_sheets = TeamSheet.objects.filter(team=representation["id"]).all()
-        representation["team_sheets"] = [team_sheet.id for team_sheet in team_sheets]
+        representation["team_sheets_amount"] = len(team_sheets)
+
+        representation["valid_team_size"] = len(players) <= 12
 
         return representation
 
@@ -73,10 +84,12 @@ class TeamSheetSerializer(serializers.ModelSerializer):
 class SignupSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'password', ]
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        fields = [
+            "username",
+            "email",
+            "password",
+        ]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def validate_email(self, value):
         validate_email(value)
@@ -89,6 +102,6 @@ class SignupSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = get_user_model()(**validated_data)
 
-        user.set_password(validated_data['password'])
+        user.set_password(validated_data["password"])
         user.save()
         return user

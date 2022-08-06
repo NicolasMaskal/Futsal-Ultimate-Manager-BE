@@ -6,9 +6,9 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 
-User._meta.get_field('email')._unique = True
-User._meta.get_field('email').blank = False
-User._meta.get_field('email').null = False
+User._meta.get_field("email")._unique = True
+User._meta.get_field("email").blank = False
+User._meta.get_field("email").null = False
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -29,6 +29,7 @@ class Team(models.Model):
     wins = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     draws = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     loses = models.IntegerField(default=0, validators=[MinValueValidator(0)])
+    coins = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
     def __str__(self):
         return self.name
