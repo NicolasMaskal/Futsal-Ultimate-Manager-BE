@@ -99,6 +99,7 @@ class TeamSheetManager:
 
 @dataclass
 class MatchResult:
+    coins : int
     player_average_overall: int
     cpu_average_overall: int
     player_goals: int
@@ -132,20 +133,21 @@ class _Match:
     def _create_match_result_from_score(self) -> MatchResult:
         self.player_goals_minutes.sort()
         self.cpu_goals_minutes.sort()
-
+        player_team = self.team_sheet_manager.get_team()
         models.MatchResult(
             player_score=self.get_player_goal_amount(),
             cpu_score=self.get_cpu_goal_amount(),
             cpu_average_overall=self.cpu_average,
-            player_team=self.team_sheet_manager.get_team(),
+            player_team=player_team,
         ).save()
 
+        added_coins = self.update_team_with_result()
         player_goal_scorers_str = [scorer.value for scorer in self.player_goal_scorers]
         player_assist_makers_str = [assister.value for assister in self.player_assist_makers]
         self.team_sheet_manager.match_finished()
-        self.update_team_with_result()
 
         return MatchResult(
+            coins=added_coins,
             player_average_overall=self.player_average,
             cpu_average_overall=self.cpu_average,
             player_goals=self.get_player_goal_amount(),
@@ -186,17 +188,28 @@ class _Match:
             random_minute = random.randint(1, 90)
         return random_minute
 
-    def update_team_with_result(self):
+    def update_team_with_result(self) -> int:
+        """
+        :return: coins gained
+        """
         team = self.team_sheet_manager.get_team()
         player_goals = self.get_player_goal_amount()
         cpu_goals = self.get_cpu_goal_amount()
+        added_coins = 0
+        added_coins_for_win = 50 + 5 * (self.cpu_average - self.player_average)
         if player_goals > cpu_goals:
             team.wins += 1
+            added_coins = added_coins_for_win + player_goals - cpu_goals
         elif player_goals == cpu_goals:
             team.draws += 1
+            added_coins = round(added_coins_for_win * 0.4)
         else:
             team.loses += 1
+            added_coins = round(added_coins_for_win / 8 + player_goals - cpu_goals)
+        added_coins = max(added_coins, 0)
+        team.coins += added_coins
         team.save()
+        return added_coins
 
     def get_player_goal_amount(self) -> int:
         return len(self.player_goals_minutes)
