@@ -15,7 +15,7 @@ class PlayerSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         team_avg = team_service.get_team_average_overall(instance.team)
         representation["sell_price"] = player_service.get_player_sell_price(
-            instance.overall, team_avg
+            instance, team_avg
         )
         return representation
 

@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Any
 import names
 from players import models
-from players.models import PlayerPosition
+from players.models import PlayerPosition, Player
 
 
 @dataclass
@@ -40,5 +40,14 @@ class PlayerGenerator:
         return positions[index]
 
 
-def get_player_sell_price(player_avg: int, team_avg: int) -> int:
-    return 20 - 2 * (team_avg - player_avg)
+def get_player_sell_price(player, team_avg: int) -> int:
+    sell_price = 20 - team_avg + player.overall
+    return max(sell_price, 5)
+
+
+def get_players_of_team(team) -> list:
+    return Player.objects.filter(team=team)
+
+
+def get_player(player_id):
+    return Player.objects.get(id=player_id)

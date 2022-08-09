@@ -88,6 +88,16 @@ class TeamViewSet(viewsets.ModelViewSet):
         return Response(pack_content)
 
     # TODO Add quick selling of players,
+    @action(detail=True, methods=["post"], name="Sell players")
+    def sell_players(self, request, pk):
+        try:
+            team = self.get_object()  # So a permission error can be brought up
+            players = request.data["players"]
+            team_service.sell_players(team, players)
+        except Exception as e:
+            return create_error_response(e)
+
+        return Response({})
 
 
 class TeamSheetViewSet(viewsets.ModelViewSet):

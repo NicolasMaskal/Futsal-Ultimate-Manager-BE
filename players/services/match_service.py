@@ -99,7 +99,7 @@ class TeamSheetManager:
 
 @dataclass
 class MatchResult:
-    coins : int
+    coins_reward: int
     player_average_overall: int
     cpu_average_overall: int
     player_goals: int

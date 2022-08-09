@@ -1,5 +1,6 @@
 from .match_service import TeamSheetPosition
 import players.services.match_service as match_service
+import players.services.player_service as player_service
 import players.models as models
 import dataclasses
 
@@ -69,3 +70,17 @@ def validate_teamsheet_team(team, team_sheet):
         raise ValueError(
             f"Team_sheet({team_sheet.id}) doesn't belong to team({team_sheet.team.id})!"
         )
+
+
+def sell_players(team, players: list):
+    team_players = player_service.get_players_of_team(team)
+    new_squad_size = len(team_players) - len(players)
+    if new_squad_size < 5:
+        raise ValueError("You can't have less than 5 players left!")
+    team_avg = get_team_average_overall(team)
+    for player_id in players:
+        player = player_service.get_player(player_id)
+        sell_price = player_service.get_player_sell_price(player, team_avg)
+        team.coins += sell_price
+        player.delete()
+    team.save()
