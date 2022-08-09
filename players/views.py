@@ -58,6 +58,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     def play_match_ai(self, request, pk=None):
         try:
             team = self.get_object()  # So a permission error can be brought up
+            team_service.validate_squad_size(team)
             difficulty = request.data["difficulty"]
             team_sheet_pk = request.data["player_team_sheet"]
             team_sheet = TeamSheet.objects.get(id=team_sheet_pk)
@@ -79,6 +80,7 @@ class TeamViewSet(viewsets.ModelViewSet):
     def buy_pack(self, request, pk):
         try:
             team = self.get_object()  # So a permission error can be brought up
+            team_service.validate_squad_size(team)
             pack_type = request.data["pack_type"]
             players = pack_service.buy_pack(team, pack_type)
             pack_content = [PlayerSerializer().to_representation(p) for p in players]
@@ -87,7 +89,6 @@ class TeamViewSet(viewsets.ModelViewSet):
 
         return Response(pack_content)
 
-    # TODO Add quick selling of players,
     @action(detail=True, methods=["post"], name="Sell players")
     def sell_players(self, request, pk):
         try:

@@ -70,3 +70,13 @@ def sell_players(team, players: list):
         team.coins += sell_price
         player.delete()
     team.save()
+
+
+def is_squad_size_valid(team) -> bool:
+    players = player_service.get_players_of_team(team)
+    return len(players) <= 12
+
+
+def validate_squad_size(team):
+    if not is_squad_size_valid(team):
+        raise ValueError("Invalid squad size. More than 12 players present!")

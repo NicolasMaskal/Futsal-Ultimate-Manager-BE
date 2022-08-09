@@ -36,15 +36,13 @@ class TeamSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
 
         representation["average_skill"] = team_service.get_team_average_skill(instance)
-
         players = Player.objects.filter(team=representation["id"]).all()
         representation["team_size"] = len(players)
 
         team_sheets = TeamSheet.objects.filter(team=representation["id"]).all()
         representation["team_sheets_amount"] = len(team_sheets)
 
-        representation["valid_team_size"] = len(players) <= 12
-
+        representation["valid_team_size"] = team_service.is_squad_size_valid(instance)
         return representation
 
 
