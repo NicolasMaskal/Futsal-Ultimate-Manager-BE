@@ -11,16 +11,16 @@ class PackType(Enum):
 
 
 def _get_lower_upper_bounds(team, pack_type: PackType) -> Tuple[int, int]:
-    avg_ovr = team_service.get_team_average_overall(team)
+    avg_skill = team_service.get_team_average_skill(team)
     if pack_type == PackType.GOLD:
-        lower_end = avg_ovr
-        upper_end = avg_ovr + 8
+        lower_end = avg_skill
+        upper_end = avg_skill + 8
     elif pack_type == PackType.SILVER:
-        lower_end = avg_ovr - 3
-        upper_end = avg_ovr + 3
+        lower_end = avg_skill - 3
+        upper_end = avg_skill + 3
     else:  # Bronze
-        lower_end = avg_ovr - 10
-        upper_end = avg_ovr
+        lower_end = avg_skill - 10
+        upper_end = avg_skill
     return lower_end, upper_end
 
 

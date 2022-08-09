@@ -13,10 +13,8 @@ class PlayerSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        team_avg = team_service.get_team_average_overall(instance.team)
-        representation["sell_price"] = player_service.get_player_sell_price(
-            instance, team_avg
-        )
+        team_avg = team_service.get_team_average_skill(instance.team)
+        representation["sell_price"] = player_service.get_player_sell_price(instance, team_avg)
         return representation
 
 
@@ -37,7 +35,7 @@ class TeamSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        representation["average_overall"] = team_service.get_team_average_overall(instance)
+        representation["average_skill"] = team_service.get_team_average_skill(instance)
 
         players = Player.objects.filter(team=representation["id"]).all()
         representation["team_size"] = len(players)
@@ -58,7 +56,7 @@ class TeamSheetSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation["average_overall"] = team_service.get_teamsheet_average_overall(instance)
+        representation["average_skill"] = team_service.get_teamsheet_average_skill(instance)
         return representation
 
     def validate(self, data):

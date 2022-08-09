@@ -39,9 +39,7 @@ class Player(models.Model):
     name = models.CharField(max_length=128)
     preferred_position = models.CharField(choices=PlayerPosition.choices, max_length=32)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
-    overall = models.IntegerField(
-        default=1, validators=[MinValueValidator(1), MaxValueValidator(99)]
-    )
+    skill = models.IntegerField(validators=[MinValueValidator(1)])
     stamina_left = models.IntegerField(
         default=100, validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
@@ -83,9 +81,9 @@ class MatchResult(models.Model):
     player_team = models.ForeignKey(Team, related_name="team", on_delete=models.CASCADE)
     player_score = models.IntegerField(validators=[MinValueValidator(0)])
     cpu_score = models.IntegerField(validators=[MinValueValidator(0)])
-    cpu_average_overall = models.IntegerField(
+    cpu_average_skill = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(99)]
     )
 
     def __str__(self):
-        return f"{self.player_score} : {self.cpu_score} ({self.cpu_average_overall})"
+        return f"{self.player_score} : {self.cpu_score} ({self.cpu_average_skill})"

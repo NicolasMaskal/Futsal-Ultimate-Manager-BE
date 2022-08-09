@@ -100,8 +100,8 @@ class TeamSheetManager:
 @dataclass
 class MatchResult:
     coins_reward: int
-    player_average_overall: int
-    cpu_average_overall: int
+    player_average_skill: int
+    cpu_average_skill: int
     player_goals: int
     cpu_goals: int
     player_goals_minutes: List[int]
@@ -137,7 +137,7 @@ class _Match:
         models.MatchResult(
             player_score=self.get_player_goal_amount(),
             cpu_score=self.get_cpu_goal_amount(),
-            cpu_average_overall=self.cpu_average,
+            cpu_average_skill=self.cpu_average,
             player_team=player_team,
         ).save()
 
@@ -147,9 +147,9 @@ class _Match:
         self.team_sheet_manager.match_finished()
 
         return MatchResult(
-            coins=added_coins,
-            player_average_overall=self.player_average,
-            cpu_average_overall=self.cpu_average,
+            coins_reward=added_coins,
+            player_average_skill=self.player_average,
+            cpu_average_skill=self.cpu_average,
             player_goals=self.get_player_goal_amount(),
             cpu_goals=self.get_cpu_goal_amount(),
             player_goals_minutes=self.player_goals_minutes,
@@ -218,7 +218,7 @@ class _Match:
         return len(self.cpu_goals_minutes)
 
 
-def play_match(player_team_sheet, player_average: int, cpu_average_overall: int) -> MatchResult:
+def play_match(player_team_sheet, player_average: int, cpu_average_skill: int) -> MatchResult:
     team_sheet_manager = TeamSheetManager(player_team_sheet)
-    match = _Match(player_average, cpu_average_overall, team_sheet_manager)
+    match = _Match(player_average, cpu_average_skill, team_sheet_manager)
     return match.play_match()
