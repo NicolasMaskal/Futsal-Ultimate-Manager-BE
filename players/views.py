@@ -156,7 +156,4 @@ class LoginView(ObtainAuthToken):
             response = super().post(request, *args, **kwargs)
         except Exception as e:
             return create_error_response(e.args[0]["non_field_errors"][0])
-        # if response.status_code == 400:
-        #     msg = response.data["non_field_errors"]
-        #     return Response({"error": True, "detail": msg}, status=400)
         return response
