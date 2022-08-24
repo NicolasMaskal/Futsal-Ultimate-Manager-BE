@@ -9,7 +9,7 @@ router = DefaultRouter()
 router.register("players", PlayerViewSet, "players")
 router.register("teams", TeamViewSet, "teams")
 router.register("team-sheets", TeamSheetViewSet, "team-sheets")
-router.register("auth/register", SignupViewSet, "register")
+router.register("auth/sign-up", SignupViewSet, "sign-up")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
