@@ -16,6 +16,7 @@ from players.serializers import (
 )
 from .services import team_service, pack_service
 from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 
 def create_error_response(e: Exception) -> Response:
@@ -31,7 +32,8 @@ class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
             return Player.objects.all()
         user = self.request.user
         teams = Team.objects.filter(owner=user)
-        return Player.objects.filter(team__in=teams)
+        players = Player.objects.filter(team__in=teams)
+        return players
 
     def get_permissions(self):
         return [OwnedByTeamPermission()]
@@ -156,4 +158,9 @@ class LoginView(ObtainAuthToken):
             response = super().post(request, *args, **kwargs)
         except Exception as e:
             return create_error_response(e.args[0]["non_field_errors"][0])
+
+        token = Token.objects.get(key=response.data["token"])
+        user_id = token.user_id
+        teams = Team.objects.filter(owner_id=user_id)
+        response.data["teams"] = [team.id for team in teams]
         return response

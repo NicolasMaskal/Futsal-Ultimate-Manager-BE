@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from players.views import PlayerViewSet, TeamViewSet, TeamSheetViewSet, SignupViewSet, LoginView
-from rest_framework.authtoken import views
 
 router = DefaultRouter()
 
