@@ -23,6 +23,16 @@ class MatchResultSerializer(serializers.ModelSerializer):
         model = MatchResult
         fields = "__all__"
 
+    def to_representation(self, instance):
+        # 2022-09-10T16:22:08.699685Z -> 10.09.2022
+
+        representation = super().to_representation(instance)
+        split_in_half = representation["date"].split("T")
+        year, month, day = split_in_half[0].split("-")
+
+        representation["date"] = f"{day}.{month}.{year}"
+        return representation
+
 
 class TeamSerializer(serializers.ModelSerializer):
     # So that owner isn't a required field when creating a team (is automatically set in perform_create)
