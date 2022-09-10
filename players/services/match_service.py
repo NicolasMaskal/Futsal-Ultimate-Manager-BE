@@ -3,19 +3,12 @@ from dataclasses import dataclass
 import random
 import players.models as models
 from typing import List, Optional
-from enum import Enum
-
-
-class TeamSheetPosition(Enum):
-    RIGHT_ATTACKER = "right_attacker"
-    LEFT_ATTACKER = "left_attacker"
-    RIGHT_DEFENDER = "right_defender"
-    LEFT_DEFENDER = "left_defender"
-    GOALKEEPER = "goalkeeper"
+import faker
+from players.services.player_service import TeamSheetPosition, PlayerGenerator
 
 
 class PositionManager:
-    positions = [position for position in TeamSheetPosition]
+    positions: List[TeamSheetPosition] = [position for position in TeamSheetPosition]
 
     @staticmethod
     def generate_goal_scorer_position() -> TeamSheetPosition:
@@ -25,8 +18,8 @@ class PositionManager:
 
     @staticmethod
     def generate_assist_maker_position() -> Optional[TeamSheetPosition]:
-        assist_made = random.choice([True, False])
-        if assist_made:
+        seed = random.randint(1, 100)
+        if seed <= 60:
             return PositionManager.generate_position(
                 attacker_perc=56, defender_perc=40, goalkeeper_perc=4
             )
@@ -98,16 +91,29 @@ class TeamSheetManager:
 
 
 @dataclass
+class RandomCpuTeamSheet:
+    right_attacker: str = PlayerGenerator.generate_random_name()
+    left_attacker: str = PlayerGenerator.generate_random_name()
+    right_defender: str = PlayerGenerator.generate_random_name()
+    left_defender: str = PlayerGenerator.generate_random_name()
+    goalkeeper: str = PlayerGenerator.generate_random_name()
+
+
+@dataclass
 class MatchResult:
     coins_reward: int
     player_average_skill: int
     cpu_average_skill: int
+    cpu_team_name: str
     player_goals: int
     cpu_goals: int
     player_goals_minutes: List[int]
     cpu_goals_minutes: List[int]
     player_goal_scorers: List[TeamSheetPosition]
+    cpu_goal_scorers: List[TeamSheetPosition]
     player_assist_makers: List[Optional[TeamSheetPosition]]
+    cpu_assist_makers: List[Optional[TeamSheetPosition]]
+    cpu_team_sheet: RandomCpuTeamSheet = RandomCpuTeamSheet()
 
 
 @dataclass
@@ -118,7 +124,11 @@ class _Match:
     player_goals_minutes: List[int] = dataclasses.field(default_factory=lambda: [])
     cpu_goals_minutes: List[int] = dataclasses.field(default_factory=lambda: [])
     player_goal_scorers: List[TeamSheetPosition] = dataclasses.field(default_factory=lambda: [])
+    cpu_goal_scorers: List[TeamSheetPosition] = dataclasses.field(default_factory=lambda: [])
     player_assist_makers: List[Optional[TeamSheetPosition]] = dataclasses.field(
+        default_factory=lambda: []
+    )
+    cpu_assist_makers: List[Optional[TeamSheetPosition]] = dataclasses.field(
         default_factory=lambda: []
     )
 
@@ -134,7 +144,9 @@ class _Match:
         self.player_goals_minutes.sort()
         self.cpu_goals_minutes.sort()
         player_team = self.team_sheet_manager.get_team()
+        cpu_team_name = "FC " + faker.Faker().city()
         models.MatchResult(
+            cpu_team_name=cpu_team_name,
             player_score=self.get_player_goal_amount(),
             cpu_score=self.get_cpu_goal_amount(),
             cpu_average_skill=self.cpu_average,
@@ -142,24 +154,26 @@ class _Match:
         ).save()
 
         added_coins = self.update_team_with_result()
-        player_goal_scorers_str = [scorer.value for scorer in self.player_goal_scorers]
-        player_assist_makers_str = [assister.value for assister in self.player_assist_makers]
+
         self.team_sheet_manager.match_finished()
 
         return MatchResult(
             coins_reward=added_coins,
             player_average_skill=self.player_average,
             cpu_average_skill=self.cpu_average,
+            cpu_team_name=cpu_team_name,
             player_goals=self.get_player_goal_amount(),
             cpu_goals=self.get_cpu_goal_amount(),
             player_goals_minutes=self.player_goals_minutes,
             cpu_goals_minutes=self.cpu_goals_minutes,
-            player_goal_scorers=player_goal_scorers_str,
-            player_assist_makers=player_assist_makers_str,
+            player_goal_scorers=self.player_goal_scorers,
+            cpu_goal_scorers=self.cpu_goal_scorers,
+            player_assist_makers=self.player_assist_makers,
+            cpu_assist_makers=self.cpu_assist_makers,
         )
 
     def _add_goal_to_score(self):
-        player_goal_chance = 50 + round(self.player_average - self.cpu_average)
+        player_goal_chance = 50 + self.player_average - self.cpu_average
 
         seed = random.randint(1, 100)
         if seed < player_goal_chance:
@@ -172,13 +186,18 @@ class _Match:
         self.player_goal_scorers.append(scorer_pos)
 
         assister_pos = self.team_sheet_manager.generate_assister_update(scorer_pos)
-        if assister_pos:
-            self.player_assist_makers.append(assister_pos)
+        self.player_assist_makers.append(assister_pos)
 
         time_of_goal = self.generate_random_minute()
         self.player_goals_minutes.append(time_of_goal)
 
     def _add_cpu_goal(self):
+        scorer_pos = PositionManager.generate_goal_scorer_position()
+        self.cpu_goal_scorers.append(scorer_pos)
+
+        assister_pos = PositionManager.generate_assist_maker_position()
+        self.cpu_assist_makers.append(assister_pos)
+
         time_of_goal = self.generate_random_minute()
         self.cpu_goals_minutes.append(time_of_goal)
 
@@ -195,7 +214,7 @@ class _Match:
         team = self.team_sheet_manager.get_team()
         player_goals = self.get_player_goal_amount()
         cpu_goals = self.get_cpu_goal_amount()
-        added_coins = 0
+
         added_coins_for_win = 50 + 5 * (self.cpu_average - self.player_average)
         if player_goals > cpu_goals:
             team.wins += 1

@@ -1,6 +1,10 @@
 from django.conf import settings
 from django.contrib.auth.validators import ASCIIUsernameValidator
-from django.core.validators import MaxValueValidator, MinValueValidator, MinLengthValidator
+from django.core.validators import (
+    MaxValueValidator,
+    MinValueValidator,
+    MinLengthValidator,
+)
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -11,7 +15,10 @@ from django.contrib.auth.models import User
 User._meta.get_field("email")._unique = True
 User._meta.get_field("email").blank = False
 User._meta.get_field("email").null = False
-User._meta.get_field("username").validators = [ASCIIUsernameValidator(), MinLengthValidator(6)]
+User._meta.get_field("username").validators = [
+    ASCIIUsernameValidator(),
+    MinLengthValidator(6),
+]
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
@@ -82,6 +89,7 @@ class TeamSheet(models.Model):
 class MatchResult(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     player_team = models.ForeignKey(Team, related_name="team", on_delete=models.CASCADE)
+    cpu_team_name = models.CharField(max_length=128)
     player_score = models.IntegerField(validators=[MinValueValidator(0)])
     cpu_score = models.IntegerField(validators=[MinValueValidator(0)])
     cpu_average_skill = models.IntegerField(

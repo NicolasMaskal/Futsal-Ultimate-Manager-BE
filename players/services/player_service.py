@@ -1,10 +1,10 @@
 import random
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any
 import names
 from players import models
 from players.models import PlayerPosition, Player
-from players.services.match_service import TeamSheetPosition
 
 
 @dataclass
@@ -21,7 +21,7 @@ class PlayerGenerator:
         return players
 
     def generate_player(self):
-        player_name = names.get_full_name(gender="male")
+        player_name = self.generate_random_name()
         player_position = self._generate_random_pos()
         player_skill = self._generate_random_skill()
         player = models.Player(
@@ -36,9 +36,16 @@ class PlayerGenerator:
 
     @staticmethod
     def _generate_random_pos() -> str:
-        positions = [pos for pos in PlayerPosition]
-        index = random.randint(0, 2)
-        return positions[index]
+        seed = random.randint(1, 100)
+        if seed <= 20:
+            return PlayerPosition.GOALKEEPER
+        if seed <= 60:
+            return PlayerPosition.DEFENDER
+        return PlayerPosition.ATTACKER
+
+    @staticmethod
+    def generate_random_name() -> str:
+        return names.get_full_name(gender="male")
 
 
 def get_player_sell_price(player, team_avg: int) -> int:
@@ -52,6 +59,15 @@ def get_players_of_team(team) -> list:
 
 def get_player(player_id):
     return Player.objects.get(id=player_id)
+
+
+# Inheriting from str because class needs to be json serializable
+class TeamSheetPosition(str, Enum):
+    RIGHT_ATTACKER = "right_attacker"
+    LEFT_ATTACKER = "left_attacker"
+    RIGHT_DEFENDER = "right_defender"
+    LEFT_DEFENDER = "left_defender"
+    GOALKEEPER = "goalkeeper"
 
 
 def get_player_skill_in_position(

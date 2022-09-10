@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "players",
     "rest_framework.authtoken",
     "django_filters",
-    "corsheaders"
+    "corsheaders",
 ]
 
 REST_FRAMEWORK = {
@@ -57,8 +57,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = "Sport_Api.urls"
@@ -111,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         "NAME": "players.services.auth_service.NoSpacePasswordAbstractValidator",
-    }
+    },
 ]
 
 
@@ -137,4 +137,4 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ORIGIN_ALLOW_ALL = True # REMOVE IN PRODUCTION !!
+CORS_ORIGIN_ALLOW_ALL = True  # REMOVE IN PRODUCTION !!

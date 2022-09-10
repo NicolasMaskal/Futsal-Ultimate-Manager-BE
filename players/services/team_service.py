@@ -9,6 +9,7 @@ def get_teamsheet_average_skill(team_sheet, stamina_effect: bool = False) -> int
     player_amount = 0
     skill_total = 0
 
+    position: TeamSheetPosition
     for position in TeamSheetPosition:
         player = getattr(team_sheet, position.value)
         if player:
@@ -54,8 +55,17 @@ def get_match_results(team) -> list:
 def validate_teamsheet_team(team, team_sheet):
     if team != team_sheet.team:
         raise ValueError(
-            f"Team_sheet({team_sheet.id}) doesn't belong to team({team_sheet.team.id})!"
+            f"Team sheet({team_sheet.id}) doesn't belong to team({team_sheet.team.id})!"
         )
+    team_sheet_positions = [
+        team_sheet.right_attacker,
+        team_sheet.left_attacker,
+        team_sheet.right_defender,
+        team_sheet.left_defender,
+        team_sheet.goalkeeper,
+    ]
+    if None in team_sheet_positions:
+        raise ValueError(f"Can't play a match with less than 5 players in team sheet!")
 
 
 def sell_players(team, players: list):
