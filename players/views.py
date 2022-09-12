@@ -1,5 +1,6 @@
 import time
 
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets, mixins
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
@@ -143,14 +144,6 @@ class SignupViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     permission_classes = [AllowAny]
     serializer_class = SignupSerializer
 
-    def create(self, request, *args, **kwargs):
-        data = super().create(request, *args, **kwargs).data
-        username = data["username"]
-        user = User.objects.get(username=username)
-        token = Token.objects.get(user=user)
-        data["token"] = token.key
-        return Response(data, status=201)
-
 
 class LoginView(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -161,6 +154,9 @@ class LoginView(ObtainAuthToken):
 
         token = Token.objects.get(key=response.data["token"])
         user_id = token.user_id
-        teams = Team.objects.filter(owner_id=user_id)
-        response.data["teams"] = [team.id for team in teams]
+        try:
+            team = Team.objects.get(owner_id=user_id)
+            response.data["team"] = dict(id=team.id, name=team.name)
+        except ObjectDoesNotExist:
+            response.data["team"] = None
         return response
