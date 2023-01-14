@@ -10,9 +10,9 @@ class TestTeamAPI(APITestCase):
     def setUp(self):
         self.client = APIClient()
 
-        self.teams_url = reverse("api:futsal_sim:teams")
+        self.teams_url = reverse("api:futsal_sim:teams-list")
 
-    @patch("src.futsal_sim.apis.teams_api.team_create")
+    @patch("src.futsal_sim.apis.teams_api.TeamCRUDService.team_create")
     def test_create_logged_in(self, team_create_mock: Mock):
         data = {"name": "nico"}
 
@@ -24,7 +24,7 @@ class TestTeamAPI(APITestCase):
 
         team_create_mock.assert_called()
 
-    @patch("src.futsal_sim.apis.teams_api.team_create")
+    @patch("src.futsal_sim.apis.teams_api.TeamCRUDService.team_create")
     def test_create_not_logged_in(self, team_create_mock: Mock):
         data = {"name": "nico"}
 

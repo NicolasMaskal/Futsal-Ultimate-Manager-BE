@@ -11,8 +11,7 @@ from src.futsal_sim.services.team_service import calc_team_average_skill
 class PlayerListApi(APIView):
     class FilterSerializer(serializers.Serializer):
         id = serializers.IntegerField(required=False)
-        name = serializers.BooleanField(required=False, allow_null=True, default=None)
-        team_id = serializers.IntegerField(required=False)
+        name = serializers.CharField(required=False, allow_null=True, default=None)
 
     class OutputSerializer(serializers.ModelSerializer):
         sell_price = serializers.SerializerMethodField()

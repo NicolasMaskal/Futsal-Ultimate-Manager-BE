@@ -15,7 +15,7 @@ from src.futsal_sim.constants import (
     SILVER_UPPER_BOUND,
 )
 from src.futsal_sim.models import Team
-from src.futsal_sim.services.player_service import PlayerGenerator
+from src.futsal_sim.services.generators import PlayerGenerator
 from src.futsal_sim.services.team_service import calc_team_average_skill
 
 

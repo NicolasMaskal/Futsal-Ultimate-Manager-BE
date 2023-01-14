@@ -19,7 +19,8 @@ from src.futsal_sim.constants import (
 from src.futsal_sim.models import MatchResult, Team, TeamSheet
 
 from .business_models import MatchResultOutput, TeamSheetPosition
-from .team_service import calc_team_average_skill, generate_random_cpu_team_name
+from .generators import generate_random_cpu_team_name
+from .team_service import calc_team_average_skill
 from .teamsheet_service import (
     calc_teamsheet_average_skill,
     generate_random_cpu_teamsheet,

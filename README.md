@@ -1,8 +1,4 @@
-<p align="center">
-<a href="https://github.com/Nicolas264859/Futsal-Sim-BE/actions"><img alt="Action Status" src="https://github.com/Nicolas264859/Futsal-Sim-BE/workflows/Lint%20&%20test/badge.svg"></a>
-<a href="https://github.com/psf/black"><img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg"></a>
-</p>
-
+# Futsal Simulator BE
 
 SOCIAL
 [![Nico github](https://img.shields.io/badge/GitHub-Nicolas264859-181717.svg?style=flat&logo=github)](https://github.com/Nicolas264859)

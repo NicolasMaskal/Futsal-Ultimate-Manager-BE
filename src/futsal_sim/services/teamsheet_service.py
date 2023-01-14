@@ -1,7 +1,8 @@
 from src.futsal_sim.models import TeamSheet
 
 from .business_models import CpuTeamSheetNames, TeamSheetPosition
-from .player_service import PlayerGenerator, PlayerSkillCalculator
+from .generators import PlayerGenerator
+from .player_service import PlayerSkillCalculator
 
 
 def calc_teamsheet_average_skill(team_sheet: TeamSheet) -> int:
@@ -13,7 +14,7 @@ def calc_teamsheet_average_skill(team_sheet: TeamSheet) -> int:
         player = getattr(team_sheet, position.value)
         if player:
             player_amount += 1
-            skill_total = PlayerSkillCalculator(player, position).calc_skill_in_pos()
+            skill_total = PlayerSkillCalculator(player=player, cur_pos=position).calc_skill_in_pos()
 
     return round(skill_total / player_amount) if player_amount != 0 else 0
 
