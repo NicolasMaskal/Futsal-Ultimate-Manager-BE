@@ -32,7 +32,7 @@ class Team(BaseModel):
 
     @property
     def has_valid_squad_size(self) -> bool:
-        return len(self.players) <= MAX_SQUAD_VALID_SIZE
+        return self.players.count() <= MAX_SQUAD_VALID_SIZE
 
 
 class Player(BaseModel):

@@ -3,7 +3,7 @@ import random
 from dataclasses import dataclass
 from typing import List, Optional
 
-from ..constants import (
+from src.futsal_sim.constants import (
     ATTACKER_ASSIST_PERC,
     ATTACKER_GOAL_PERC,
     DEFENDER_ASSIST_PERC,
@@ -16,7 +16,8 @@ from ..constants import (
     MULTIPLIER_COIN_DRAW,
     MULTIPLIER_COIN_LOSS,
 )
-from ..models import MatchResult, Team, TeamSheet
+from src.futsal_sim.models import MatchResult, Team, TeamSheet
+
 from .business_models import MatchResultOutput, TeamSheetPosition
 from .team_service import calc_team_average_skill, generate_random_cpu_team_name
 from .teamsheet_service import (

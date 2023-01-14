@@ -30,8 +30,8 @@ class UserJwtRegisterApi(CsrfExemptedSessionAuthentication, APIView):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = user_create(email=serializer.data["email"], password=serializer.data["password"])
-        serializer = UserOutputSerializer(user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer_output = UserOutputSerializer(user)
+        return Response(serializer_output.data, status=status.HTTP_201_CREATED)
 
 
 class UserJwtLoginApi(ObtainJSONWebTokenView):

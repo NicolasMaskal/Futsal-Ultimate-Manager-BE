@@ -5,17 +5,17 @@ import names
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import QuerySet
 
-from ...users.models import User
-from ..constants import (
+from src.futsal_sim.constants import (
     MULTIPLIER_DIFFERENT_INFIELD_POS,
     MULTIPLIER_GK_INFIELD,
     MULTIPLIER_INFIELD_AS_GK,
     MULTIPLIER_PLAYER_FAV_POS,
     STAMINA_EFFECT,
 )
-from ..filters import PlayerFilter
-from ..models import Player, PlayerPosition, Team
-from .business_models import TeamSheetPosition
+from src.futsal_sim.filters import PlayerFilter
+from src.futsal_sim.models import Player, PlayerPosition, Team
+from src.futsal_sim.services.business_models import TeamSheetPosition
+from src.users.models import User
 
 
 class PlayerReadService:
@@ -93,7 +93,7 @@ class PlayerSkillCalculator:
         return self.player.preferred_position in self.cur_pos.value
 
     def _apply_multiplier(self, multiplier: float):
-        if self._res_skill:
+        if not self._res_skill:
             raise ValueError("Programming error, res_skill is None!")
         self._res_skill = round(multiplier * self._res_skill)
 
@@ -126,5 +126,8 @@ class PlayerSkillCalculator:
             self._apply_playing_as_gk()
         else:
             self._apply_playing_infield()
+
+        if self._res_skill is None:
+            raise ValueError("Result skill is none!")
 
         return max(1, self._res_skill)

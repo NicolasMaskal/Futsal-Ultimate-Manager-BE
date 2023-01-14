@@ -2,8 +2,8 @@ import faker
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
 
-from ...users.models import User
-from ..models import Player, Team, TeamSheet
+from src.futsal_sim.models import Player, Team, TeamSheet
+from src.users.models import User
 
 
 def team_create(*, user: User, name: str) -> Team:
@@ -20,7 +20,7 @@ def team_create(*, user: User, name: str) -> Team:
 
 
 def calc_team_average_skill(team) -> int:
-    average_skill = Player.objects.filter(team=team.id).aggregate(Avg("skill"))
+    average_skill: int = Player.objects.filter(team=team.id).aggregate(Avg("skill"))["skill__avg"]
     return average_skill if average_skill else 0
 
 
@@ -40,7 +40,7 @@ def validate_teamsheet_team(*, team: Team, team_sheet: TeamSheet):
 
 
 def sell_players(*, team: Team, players_to_sell: list[int]):
-    new_squad_size = len(team.players) - len(players_to_sell)
+    new_squad_size = team.players.count() - len(players_to_sell)
     if new_squad_size < 5:
         raise ValidationError("You can't have less than 5 players left!")
     team_avg = calc_team_average_skill(team)

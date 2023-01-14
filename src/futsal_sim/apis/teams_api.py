@@ -3,9 +3,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ...api.mixins import ApiAuthMixin
-from ..serializers import TeamOutputSerializer
-from ..services.team_service import team_create
+from src.api.mixins import ApiAuthMixin
+from src.futsal_sim.serializers import TeamOutputSerializer
+from src.futsal_sim.services.team_service import team_create
 
 
 class TeamCreateApi(ApiAuthMixin, APIView):
@@ -17,6 +17,6 @@ class TeamCreateApi(ApiAuthMixin, APIView):
         serializer.is_valid(raise_exception=True)
         created_team = team_create(user=request.user, name=serializer.data["name"])
 
-        serializer = TeamOutputSerializer(created_team)
+        serializer_output = TeamOutputSerializer(created_team)
 
-        return Response(data=serializer.data, status=201)
+        return Response(data=serializer_output.data, status=201)

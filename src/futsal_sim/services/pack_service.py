@@ -14,10 +14,9 @@ from src.futsal_sim.constants import (
     SILVER_PRICE,
     SILVER_UPPER_BOUND,
 )
-
-from ..models import Team
-from .player_service import PlayerGenerator
-from .team_service import calc_team_average_skill
+from src.futsal_sim.models import Team
+from src.futsal_sim.services.player_service import PlayerGenerator
+from src.futsal_sim.services.team_service import calc_team_average_skill
 
 
 class PackType(Enum):

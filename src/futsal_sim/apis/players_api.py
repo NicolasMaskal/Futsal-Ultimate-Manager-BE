@@ -3,14 +3,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..models import Player
-from ..services.player_service import PlayerReadService
-from ..services.team_service import calc_team_average_skill
+from src.futsal_sim.models import Player
+from src.futsal_sim.services.player_service import PlayerReadService
+from src.futsal_sim.services.team_service import calc_team_average_skill
 
 
 class PlayerListApi(APIView):
-    permission_classes = []
-
     class FilterSerializer(serializers.Serializer):
         id = serializers.IntegerField(required=False)
         name = serializers.BooleanField(required=False, allow_null=True, default=None)
