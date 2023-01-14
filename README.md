@@ -1,11 +1,11 @@
 # Futsal Simulator BE
 
-SOCIAL
+#SOCIAL
 [![Nico github](https://img.shields.io/badge/GitHub-Nicolas264859-181717.svg?style=flat&logo=github)](https://github.com/Nicolas264859)
 
 
 # CODE
-[![Actions](https://github.com/Nicolas264859/Futsal-Sim-BE/workflows/Lint%20&%20test/badge.svg)](https://github.com/Nicolas264859/Futsal-Sim-BE/actions)
+[![Lint & test](https://github.com/Nicolas264859/Futsal-Sim-BE/actions/workflows/django.yml/badge.svg)](https://github.com/Nicolas264859/Futsal-Sim-BE/actions/workflows/django.yml)
 [![python](https://img.shields.io/badge/Python-3.10-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)

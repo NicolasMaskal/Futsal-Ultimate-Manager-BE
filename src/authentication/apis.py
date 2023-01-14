@@ -23,9 +23,6 @@ class UserJwtRegisterApi(CsrfExemptedSessionAuthentication, APIView):
             ]
         )
 
-    class OutputSerializer(serializers.Serializer):
-        user = UserOutputSerializer()
-
     def post(self, request: Request, *args, **kwargs):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

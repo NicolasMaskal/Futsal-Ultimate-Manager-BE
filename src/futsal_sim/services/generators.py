@@ -3,6 +3,11 @@ import random
 import faker
 import names
 
+from src.futsal_sim.constants import (
+    ATT_GENERATION_PERC_CHANCE,
+    DEF_GENERATION_PERC_CHANCE,
+    GK_GENERATION_PERC_CHANCE,
+)
 from src.futsal_sim.models import Player, PlayerPosition, Team
 
 
@@ -42,10 +47,11 @@ class PlayerGenerator:
 
     @staticmethod
     def _generate_random_pos() -> str:
+        assert GK_GENERATION_PERC_CHANCE + DEF_GENERATION_PERC_CHANCE + ATT_GENERATION_PERC_CHANCE == 100
         seed = random.randint(1, 100)
-        if seed <= 20:
+        if seed <= GK_GENERATION_PERC_CHANCE:
             return PlayerPosition.GOALKEEPER
-        if seed <= 60:
+        if seed <= DEF_GENERATION_PERC_CHANCE + GK_GENERATION_PERC_CHANCE:
             return PlayerPosition.DEFENDER
         return PlayerPosition.ATTACKER
 

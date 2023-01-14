@@ -32,7 +32,7 @@ class TeamCRUDApi(ApiAuthMixin, ViewSet):
 
         return Response(data=serializer.data)
 
-    def put(self, request: Request, pk: int):
+    def update(self, request: Request, pk: int):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         service = TeamCRUDService(user=request.user)
@@ -42,7 +42,7 @@ class TeamCRUDApi(ApiAuthMixin, ViewSet):
 
         return Response(data=serializer_output.data, status=status.HTTP_200_OK)
 
-    def post(self, request: Request):
+    def create(self, request: Request):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         service = TeamCRUDService(user=request.user)

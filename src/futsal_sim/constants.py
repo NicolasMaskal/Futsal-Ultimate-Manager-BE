@@ -1,3 +1,6 @@
+# Player amount in team sheet
+PLAYER_AMOUNT_TEAM_SHEET = 5
+
 # Formula for calculation: BASE_PRICE - team_avg + self.skill
 BASE_PRICE_FOR_AVERAGE_PLAYER = 20
 
@@ -51,6 +54,7 @@ STAMINA_EFFECT = True
 
 # -----------------------------------------------
 # Packs
+PLAYER_AMOUNT_IN_PACK = 3
 BRONZE_PRICE = 100
 SILVER_PRICE = 200
 GOLD_PRICE = 400
@@ -64,3 +68,18 @@ SILVER_UPPER_BOUND = 3
 
 BRONZE_LOWER_BOUND = -10
 BRONZE_UPPER_BOUND = 0
+
+# Player generation used in packs, and during team creation
+GK_GENERATION_PERC_CHANCE = 20
+DEF_GENERATION_PERC_CHANCE = 40
+ATT_GENERATION_PERC_CHANCE = 40
+
+# ---------------------------------------------
+# Team Creation
+BASE_COIN_AMOUNT = 100
+
+# Created team will have players with skill in this interval
+PLAYER_AMOUNT_CREATED_TEAM = 7
+
+SKILL_LOWER_BOUND_CREATED_TEAM = 15
+SKILL_UPPER_BOUND_CREATED_TEAM = 25

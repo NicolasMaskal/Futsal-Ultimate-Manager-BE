@@ -3,8 +3,15 @@ from django.db.models import Avg, QuerySet
 from rest_framework.generics import get_object_or_404
 
 from src.common.services import model_update
+from src.futsal_sim.constants import (
+    BASE_COIN_AMOUNT,
+    PLAYER_AMOUNT_CREATED_TEAM,
+    SKILL_LOWER_BOUND_CREATED_TEAM,
+    SKILL_UPPER_BOUND_CREATED_TEAM,
+)
 from src.futsal_sim.filters import TeamFilter
 from src.futsal_sim.models import Player, Team, TeamSheet
+from src.futsal_sim.services.generators import PlayerGenerator
 from src.users.models import User
 
 
@@ -27,9 +34,15 @@ class TeamCRUDService:
         return get_object_or_404(self.query_set(), id=team_id)
 
     def team_create(self, *, name: str) -> Team:
-        team = Team(name=name, owner=self.user)
+        team = Team(name=name, owner=self.user, coins=BASE_COIN_AMOUNT)
         team.full_clean()
         team.save()
+
+        generator = PlayerGenerator(
+            team=team, lower_end=SKILL_LOWER_BOUND_CREATED_TEAM, upper_end=SKILL_UPPER_BOUND_CREATED_TEAM
+        )
+
+        generator.generate_players(PLAYER_AMOUNT_CREATED_TEAM)
 
         if not self.user.active_team:
             self.user.active_team = team
@@ -51,7 +64,7 @@ class TeamCRUDService:
         team.delete()
 
 
-def calc_team_average_skill(team: Team) -> int:
+def calc_team_average_skill(team: Team) -> float:
     average_skill = Player.objects.filter(team=team.id).aggregate(Avg("skill"))["skill__avg"]
     return average_skill if average_skill else 0
 

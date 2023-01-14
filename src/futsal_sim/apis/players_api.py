@@ -3,9 +3,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from src.futsal_sim.models import Player
+from src.futsal_sim.serializers import PlayerOutputSerializer
 from src.futsal_sim.services.player_service import PlayerReadService
-from src.futsal_sim.services.team_service import calc_team_average_skill
 
 
 class PlayerListApi(APIView):
@@ -13,34 +12,12 @@ class PlayerListApi(APIView):
         id = serializers.IntegerField(required=False)
         name = serializers.CharField(required=False, allow_null=True, default=None)
 
-    class OutputSerializer(serializers.ModelSerializer):
-        sell_price = serializers.SerializerMethodField()
-
-        def get_sell_price(self, obj: Player):
-            team_avg = calc_team_average_skill(obj.team)
-            return obj.calc_sell_price(team_avg)
-
-        class Meta:
-            model = Player
-            fields = (
-                "id",
-                "name",
-                "preferred_position",
-                "skill",
-                "stamina_left",
-                "matches_played",
-                "goals_scored",
-                "assists_made",
-                "team_id",
-                "sell_price",
-            )
-
     def get(self, request: Request):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
 
-        service = PlayerReadService(request.user)
+        service = PlayerReadService(user=request.user)
         queryset = service.player_list(filters=filters_serializer.validated_data)
-        serializer = self.OutputSerializer(queryset, many=True)
+        serializer = PlayerOutputSerializer(queryset, many=True)
 
         return Response(data=serializer.data)

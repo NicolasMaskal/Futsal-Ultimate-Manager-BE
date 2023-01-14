@@ -8,7 +8,11 @@ from django.db import models
 
 from ..common.models import BaseModel
 from ..users.models import User
-from .constants import BASE_PRICE_FOR_AVERAGE_PLAYER, MAX_SQUAD_VALID_SIZE
+from .constants import (
+    BASE_PRICE_FOR_AVERAGE_PLAYER,
+    MAX_SQUAD_VALID_SIZE,
+    PLAYER_AMOUNT_TEAM_SHEET,
+)
 
 
 class PlayerPosition(models.TextChoices):
@@ -32,7 +36,7 @@ class Team(BaseModel):
 
     @property
     def has_valid_squad_size(self) -> bool:
-        return self.players.count() <= MAX_SQUAD_VALID_SIZE
+        return PLAYER_AMOUNT_TEAM_SHEET <= self.players.count() <= MAX_SQUAD_VALID_SIZE
 
 
 class Player(BaseModel):
@@ -52,9 +56,9 @@ class Player(BaseModel):
     def is_gk(self) -> bool:
         return self.preferred_position == TeamSheet.goalkeeper
 
-    def calc_sell_price(self, team_avg: int) -> int:
+    def calc_sell_price(self, team_avg: float) -> int:
         sell_price = BASE_PRICE_FOR_AVERAGE_PLAYER - team_avg + self.skill
-        return max(sell_price, 5)
+        return max(round(sell_price), 5)
 
     class Meta:
         constraints = [

@@ -106,7 +106,7 @@ class UserJwtLoginTests(TestCase):
     @patch("src.authentication.apis.user_create")
     def test_register_creates_user(self, user_create_mock: Mock):
         data = {"email": "test_register@futsal.io", "password": "Pswd1234"}
-
+        user_create_mock.return_value = User(**data)
         response = self.client.post(self.register_url, data)
         self.assertEqual(201, response.status_code)
 

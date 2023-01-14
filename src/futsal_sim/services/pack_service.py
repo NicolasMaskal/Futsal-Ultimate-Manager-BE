@@ -10,6 +10,7 @@ from src.futsal_sim.constants import (
     GOLD_LOWER_BOUND,
     GOLD_PRICE,
     GOLD_UPPER_BOUND,
+    PLAYER_AMOUNT_IN_PACK,
     SILVER_LOWER_BOUND,
     SILVER_PRICE,
     SILVER_UPPER_BOUND,
@@ -25,25 +26,25 @@ class PackType(Enum):
     GOLD = GOLD_PRICE
 
 
-def _get_lower_upper_bounds(team, pack_type: PackType) -> Tuple[int, int]:
+def _get_lower_upper_bounds(team: Team, pack_type: PackType) -> Tuple[int, int]:
     avg_skill = calc_team_average_skill(team)
     match pack_type:
-        case [PackType.GOLD]:
+        case PackType.GOLD:
             lower_end = avg_skill + GOLD_LOWER_BOUND
             upper_end = avg_skill + GOLD_UPPER_BOUND
-        case [PackType.SILVER]:
+        case PackType.SILVER:
             lower_end = avg_skill + SILVER_LOWER_BOUND
             upper_end = avg_skill + SILVER_UPPER_BOUND
-        case [PackType.BRONZE]:
+        case PackType.BRONZE:
             lower_end = avg_skill + BRONZE_LOWER_BOUND
             upper_end = avg_skill + BRONZE_UPPER_BOUND
         case _:
             raise ValueError("Invalid pack type detected!")
 
-    return lower_end, upper_end
+    return round(lower_end), round(upper_end)
 
 
-def _validate_pack_type(pack_type: str) -> PackType:
+def get_pack_by_pack_type(pack_type: str) -> PackType:
     pack_type = pack_type.lower()
     pack_types = dict(gold=PackType.GOLD, silver=PackType.SILVER, bronze=PackType.BRONZE)
     if pack_type not in pack_types:
@@ -51,20 +52,19 @@ def _validate_pack_type(pack_type: str) -> PackType:
     return pack_types[pack_type]
 
 
-def _validate_team_coins(team: Team, pack_type: PackType):
+def _validate_team_coins(*, team: Team, pack_type: PackType):
     if team.coins < pack_type.value:
         raise ValidationError("Not enough coins to buy this pack!")
 
 
-def buy_pack(team: Team, pack_type_str: str) -> list:
-    pack_type = _validate_pack_type(pack_type_str)
-    print(pack_type)
-    _validate_team_coins(team, pack_type)
-    team.coins -= pack_type.value
+def buy_pack(*, team: Team, pack_type: str) -> list:
+    pack_type_obj = get_pack_by_pack_type(pack_type)
+    _validate_team_coins(team=team, pack_type=pack_type_obj)
+    team.coins -= pack_type_obj.value
 
-    lower_b, upper_b = _get_lower_upper_bounds(team, pack_type)
+    lower_b, upper_b = _get_lower_upper_bounds(team, pack_type_obj)
     generator = PlayerGenerator(team=team, lower_end=lower_b, upper_end=upper_b)
-    players = generator.generate_players(3)
+    players = generator.generate_players(PLAYER_AMOUNT_IN_PACK)
 
     team.save()  # Save spent coins
     return players
