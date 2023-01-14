@@ -14,7 +14,7 @@ class PlayerListApi(ApiAuthMixin, APIView):
         id = serializers.IntegerField(required=False)
         name = serializers.CharField(required=False, allow_null=True, default=None)
 
-    def get(self, request: Request, team_id: int,):
+    def get(self, request: Request, team_id: int):
         filters_serializer = self.FilterSerializer(data=request.query_params)
         filters_serializer.is_valid(raise_exception=True)
 
