@@ -1,4 +1,4 @@
-name: Django application
+name: Lint & test
 on: [push]
 jobs:
   docker_build:
