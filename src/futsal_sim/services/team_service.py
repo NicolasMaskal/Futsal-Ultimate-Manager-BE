@@ -6,8 +6,10 @@ from src.common.services import model_update
 from src.futsal_sim.constants import (
     BASE_COIN_AMOUNT,
     PLAYER_AMOUNT_CREATED_TEAM,
+    PLAYER_AMOUNT_TEAM_SHEET,
     SKILL_LOWER_BOUND_CREATED_TEAM,
     SKILL_UPPER_BOUND_CREATED_TEAM,
+    TEAM_SKILL_CALC_PLAYER_AMOUNT,
 )
 from src.futsal_sim.filters import TeamFilter
 from src.futsal_sim.models import Player, Team, TeamSheet
@@ -64,9 +66,14 @@ class TeamCRUDService:
         team.delete()
 
 
-def calc_team_average_skill(team: Team) -> float:
-    average_skill = Player.objects.filter(team=team.id).aggregate(Avg("skill"))["skill__avg"]
-    return average_skill if average_skill else 0
+def calc_team_skill(team: Team) -> float:
+    # Take x most skillful players and calculate their skill average
+    team_skill = (
+        Player.objects.filter(team=team.id)
+        .order_by("-skill")[:TEAM_SKILL_CALC_PLAYER_AMOUNT]
+        .aggregate(Avg("skill"))["skill__avg"]
+    )
+    return team_skill if team_skill else 0
 
 
 def validate_teamsheet_team(*, team: Team, team_sheet: TeamSheet):
@@ -84,19 +91,25 @@ def validate_teamsheet_team(*, team: Team, team_sheet: TeamSheet):
         raise ValidationError("Can't play a match with less than 5 players in team sheet!")
 
 
-def sell_players(*, team: Team, players_to_sell: list[int]):
-    new_squad_size = team.players.count() - len(players_to_sell)
-    if new_squad_size < 5:
-        raise ValidationError("You can't have less than 5 players left!")
-    team_avg = calc_team_average_skill(team)
-    for player_id in players_to_sell:
-        player = Player.objects.get(player_id)
-        sell_price = player.calc_sell_price(team_avg)
-        team.coins += sell_price
-        player.delete()
-    team.save()
-
-
 def validate_squad_size(team: Team):
     if not team.has_valid_squad_size:
         raise ValidationError("Invalid squad size. More than 12 players present!")
+
+
+def team_sell_players(*, team: Team, player_ids: list[int]) -> Team:
+    new_squad_size = team.players.count() - len(player_ids)
+    if new_squad_size < PLAYER_AMOUNT_TEAM_SHEET:
+        raise ValidationError(f"You can't have less than {PLAYER_AMOUNT_TEAM_SHEET} players left!")
+
+    player_qs: QuerySet[Player] = Player.objects.filter(pk__in=player_ids)
+
+    players: list[Player] = list(player_qs.all())
+    team_avg = calc_team_skill(team)
+    total_sell_price = sum([player.calc_sell_price(team_avg) for player in players])
+
+    player_qs.delete()
+
+    new_coin_amount = team.coins + total_sell_price
+    team, _ = model_update(instance=team, fields=["coins"], data={"coins": new_coin_amount})
+
+    return team

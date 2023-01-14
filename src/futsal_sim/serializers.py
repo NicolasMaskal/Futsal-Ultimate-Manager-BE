@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from src.futsal_sim.models import Player, Team
-from src.futsal_sim.services.team_service import calc_team_average_skill
+from src.futsal_sim.services.team_service import calc_team_skill
 
 
 class TeamOutputSerializer(serializers.ModelSerializer):
@@ -19,8 +19,8 @@ class PlayerOutputSerializer(serializers.ModelSerializer):
     sell_price = serializers.SerializerMethodField()
 
     def get_sell_price(self, obj: Player) -> int:
-        team_avg = calc_team_average_skill(obj.team)
-        return obj.calc_sell_price(team_avg)
+        team_skill = calc_team_skill(obj.team)
+        return obj.calc_sell_price(team_skill)
 
     class Meta:
         model = Player

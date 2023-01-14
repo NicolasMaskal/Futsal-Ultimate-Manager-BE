@@ -1,12 +1,15 @@
 # Player amount in team sheet
 PLAYER_AMOUNT_TEAM_SHEET = 5
 
+# Used when calculating team skill
+TEAM_SKILL_CALC_PLAYER_AMOUNT = 8
+
 # Formula for calculation: BASE_PRICE - team_avg + self.skill
 BASE_PRICE_FOR_AVERAGE_PLAYER = 20
 
 MIN_PLAYER_SELL_PRICE = 5
 
-MAX_SQUAD_VALID_SIZE = 12
+MAX_SQUAD_VALID_SIZE = 25
 
 MIN_GOAL_AMOUNT = 0
 

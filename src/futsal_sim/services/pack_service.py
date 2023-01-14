@@ -17,7 +17,7 @@ from src.futsal_sim.constants import (
 )
 from src.futsal_sim.models import Team
 from src.futsal_sim.services.generators import PlayerGenerator
-from src.futsal_sim.services.team_service import calc_team_average_skill
+from src.futsal_sim.services.team_service import calc_team_skill
 
 
 class PackType(Enum):
@@ -27,17 +27,17 @@ class PackType(Enum):
 
 
 def _get_lower_upper_bounds(team: Team, pack_type: PackType) -> Tuple[int, int]:
-    avg_skill = calc_team_average_skill(team)
+    team_skill = calc_team_skill(team)
     match pack_type:
         case PackType.GOLD:
-            lower_end = avg_skill + GOLD_LOWER_BOUND
-            upper_end = avg_skill + GOLD_UPPER_BOUND
+            lower_end = team_skill + GOLD_LOWER_BOUND
+            upper_end = team_skill + GOLD_UPPER_BOUND
         case PackType.SILVER:
-            lower_end = avg_skill + SILVER_LOWER_BOUND
-            upper_end = avg_skill + SILVER_UPPER_BOUND
+            lower_end = team_skill + SILVER_LOWER_BOUND
+            upper_end = team_skill + SILVER_UPPER_BOUND
         case PackType.BRONZE:
-            lower_end = avg_skill + BRONZE_LOWER_BOUND
-            upper_end = avg_skill + BRONZE_UPPER_BOUND
+            lower_end = team_skill + BRONZE_LOWER_BOUND
+            upper_end = team_skill + BRONZE_UPPER_BOUND
         case _:
             raise ValueError("Invalid pack type detected!")
 

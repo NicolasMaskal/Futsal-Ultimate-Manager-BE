@@ -20,7 +20,7 @@ from src.futsal_sim.models import MatchResult, Team, TeamSheet
 
 from .business_models import MatchResultOutput, TeamSheetPosition
 from .generators import generate_random_cpu_team_name
-from .team_service import calc_team_average_skill
+from .team_service import calc_team_skill
 from .teamsheet_service import (
     calc_teamsheet_average_skill,
     generate_random_cpu_teamsheet,
@@ -228,8 +228,8 @@ class _Match:
 
 
 def generate_cpu_skill(*, team: Team, difficulty_rating: int) -> int:
-    team_average = calc_team_average_skill(team)
-    cpu_average = team_average - 10 + (difficulty_rating * 2)
+    team_skill = calc_team_skill(team)
+    cpu_average = round(team_skill - 10 + (difficulty_rating * 2))
     return cpu_average
 
 

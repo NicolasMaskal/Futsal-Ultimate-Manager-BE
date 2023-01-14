@@ -1,11 +1,14 @@
 from rest_framework import serializers, status
+from rest_framework.fields import Field
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 
 from src.api.mixins import ApiAuthMixin
+from src.futsal_sim.models import Player
 from src.futsal_sim.serializers import TeamOutputSerializer
-from src.futsal_sim.services.team_service import TeamCRUDService
+from src.futsal_sim.services.team_service import TeamCRUDService, team_sell_players
 
 
 class TeamCRUDApi(ApiAuthMixin, ViewSet):
@@ -57,3 +60,22 @@ class TeamCRUDApi(ApiAuthMixin, ViewSet):
         service.team_delete(team_id=int(pk))
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class SellPlayersApi(ApiAuthMixin, APIView):
+    def post(self, request: Request, pk: int):
+        class InputSerializer(serializers.Serializer):
+            players: Field = serializers.ListSerializer(
+                child=serializers.PrimaryKeyRelatedField(queryset=Player.objects.filter(team_id=pk)),
+                allow_empty=False,
+                allow_null=False,
+            )
+
+        input_serializer = InputSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+
+        team = TeamCRUDService(user=request.user).team_retrieve(team_id=pk)
+        team = team_sell_players(team=team, player_ids=input_serializer.data["players"])
+
+        output_serializer = TeamOutputSerializer(team)
+        return Response(output_serializer.data)
