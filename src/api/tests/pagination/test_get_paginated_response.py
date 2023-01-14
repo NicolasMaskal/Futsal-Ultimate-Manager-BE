@@ -5,10 +5,7 @@ from rest_framework import serializers
 from rest_framework.test import APIRequestFactory
 from rest_framework.views import APIView
 
-from src.api.pagination import (
-    LimitOffsetPagination,
-    get_paginated_response,
-)
+from src.api.pagination import LimitOffsetPagination, get_paginated_response
 from src.users.models import User
 from src.users.services import user_create
 

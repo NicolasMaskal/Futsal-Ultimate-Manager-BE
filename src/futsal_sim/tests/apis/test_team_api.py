@@ -1,4 +1,4 @@
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 from django.urls import reverse
 from rest_framework.test import APIClient, APITestCase

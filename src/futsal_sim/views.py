@@ -1,19 +1,20 @@
-from rest_framework import viewsets, mixins
+from rest_framework import mixins, viewsets
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from futsal_sim.serializers import (
+    MatchResultSerializer,
     PlayerSerializer,
+    SignupSerializer,
     TeamSerializer,
     TeamSheetSerializer,
-    SignupSerializer,
-    MatchResultSerializer,
 )
-from .models import Player, Team, TeamSheet
-from .apis.permissions import TeamPermission, OwnedByTeamPermission
-from .services import team_service, pack_service
+
+from .apis.permissions import OwnedByTeamPermission, TeamPermission
+from .models import Team, TeamSheet
+from .services import pack_service, team_service
 
 
 def create_error_response(e: Exception) -> Response:

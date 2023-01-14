@@ -1,10 +1,7 @@
 from rest_framework import serializers
 from rest_framework.views import APIView
 
-from src.api.pagination import (
-    LimitOffsetPagination,
-    get_paginated_response,
-)
+from src.api.pagination import LimitOffsetPagination, get_paginated_response
 from src.users.selectors import user_list
 from src.users.serializers import UserOutputSerializer
 

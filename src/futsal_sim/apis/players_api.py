@@ -47,5 +47,3 @@ class PlayerListApi(APIView):
         serializer = self.OutputSerializer(queryset, many=True)
 
         return Response(data=serializer.data)
-
-

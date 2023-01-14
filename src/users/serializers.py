@@ -9,4 +9,4 @@ class UserOutputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "email", "is_admin", 'active_team')
+        fields = ("id", "email", "is_admin", "active_team")

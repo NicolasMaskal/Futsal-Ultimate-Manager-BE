@@ -3,10 +3,21 @@ from typing import Tuple
 
 from rest_framework.exceptions import ValidationError
 
-from ..constants import GOLD_LOWER_BOUND, SILVER_LOWER_BOUND, SILVER_UPPER_BOUND, GOLD_UPPER_BOUND, \
-    BRONZE_LOWER_BOUND, BRONZE_UPPER_BOUND, GOLD_PRICE, SILVER_PRICE, BRONZE_PRICE
+from src.futsal_sim.constants import (
+    BRONZE_LOWER_BOUND,
+    BRONZE_PRICE,
+    BRONZE_UPPER_BOUND,
+    GOLD_LOWER_BOUND,
+    GOLD_PRICE,
+    GOLD_UPPER_BOUND,
+    SILVER_LOWER_BOUND,
+    SILVER_PRICE,
+    SILVER_UPPER_BOUND,
+)
+
 from ..models import Team
-from . import team_service, player_service
+from .player_service import PlayerGenerator
+from .team_service import calc_team_average_skill
 
 
 class PackType(Enum):
@@ -16,7 +27,7 @@ class PackType(Enum):
 
 
 def _get_lower_upper_bounds(team, pack_type: PackType) -> Tuple[int, int]:
-    avg_skill = team_service.calc_team_average_skill(team)
+    avg_skill = calc_team_average_skill(team)
     match pack_type:
         case [PackType.GOLD]:
             lower_end = avg_skill + GOLD_LOWER_BOUND
@@ -43,7 +54,7 @@ def _validate_pack_type(pack_type: str) -> PackType:
 
 def _validate_team_coins(team: Team, pack_type: PackType):
     if team.coins < pack_type.value:
-        raise ValidationError(f"Not enough coins to buy this pack!")
+        raise ValidationError("Not enough coins to buy this pack!")
 
 
 def buy_pack(team: Team, pack_type_str: str) -> list:
@@ -53,7 +64,7 @@ def buy_pack(team: Team, pack_type_str: str) -> list:
     team.coins -= pack_type.value
 
     lower_b, upper_b = _get_lower_upper_bounds(team, pack_type)
-    generator = player_service.PlayerGenerator(team=team, lower_end=lower_b, upper_end=upper_b)
+    generator = PlayerGenerator(team=team, lower_end=lower_b, upper_end=upper_b)
     players = generator.generate_players(3)
 
     team.save()  # Save spent coins

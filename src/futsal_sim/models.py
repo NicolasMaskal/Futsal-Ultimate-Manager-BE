@@ -1,14 +1,14 @@
 from django.core.validators import (
-    MaxValueValidator,
-    MinValueValidator,
     MaxLengthValidator,
-    MinLengthValidator, RegexValidator,
+    MaxValueValidator,
+    MinLengthValidator,
+    MinValueValidator,
 )
 from django.db import models
 
-from .constants import BASE_PRICE_FOR_AVERAGE_PLAYER, MAX_SQUAD_VALID_SIZE
 from ..common.models import BaseModel
 from ..users.models import User
+from .constants import BASE_PRICE_FOR_AVERAGE_PLAYER, MAX_SQUAD_VALID_SIZE
 
 
 class PlayerPosition(models.TextChoices):

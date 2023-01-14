@@ -3,13 +3,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from ...api.mixins import ApiAuthMixin
 from ..serializers import TeamOutputSerializer
 from ..services.team_service import team_create
-from ...api.mixins import ApiAuthMixin
 
 
 class TeamCreateApi(ApiAuthMixin, APIView):
-
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
 

@@ -3,27 +3,26 @@ import random
 from dataclasses import dataclass
 from typing import List, Optional
 
-from .team_service import generate_random_cpu_team_name, calc_team_average_skill
 from ..constants import (
-    MAX_GOAL_AMOUNT,
+    ATTACKER_ASSIST_PERC,
+    ATTACKER_GOAL_PERC,
+    DEFENDER_ASSIST_PERC,
+    DEFENDER_GOAL_PERC,
+    GK_ASSIST_PERC,
+    GK_GOAL_PERC,
     GOAL_AMOUNT_GENERATION_ITERATIONS,
+    MAX_GOAL_AMOUNT,
     MIN_GOAL_AMOUNT,
     MULTIPLIER_COIN_DRAW,
     MULTIPLIER_COIN_LOSS,
-    GK_GOAL_PERC,
-    DEFENDER_GOAL_PERC,
-    ATTACKER_GOAL_PERC,
-    DEFENDER_ASSIST_PERC,
-    GK_ASSIST_PERC,
-    ATTACKER_ASSIST_PERC,
 )
-from ..models import Team, MatchResult, TeamSheet
+from ..models import MatchResult, Team, TeamSheet
 from .business_models import MatchResultOutput, TeamSheetPosition
+from .team_service import calc_team_average_skill, generate_random_cpu_team_name
 from .teamsheet_service import (
     calc_teamsheet_average_skill,
     generate_random_cpu_teamsheet,
 )
-from ...common.services import model_update
 
 
 class PositionGenerator:

@@ -2,8 +2,8 @@ import faker
 from django.core.exceptions import ValidationError
 from django.db.models import Avg
 
-from ..models import Player, Team, TeamSheet
 from ...users.models import User
+from ..models import Player, Team, TeamSheet
 
 
 def team_create(*, user: User, name: str) -> Team:
@@ -20,16 +20,14 @@ def team_create(*, user: User, name: str) -> Team:
 
 
 def calc_team_average_skill(team) -> int:
-    average_skill = Player.objects.filter(team=team.id).aggregate(Avg('skill'))
+    average_skill = Player.objects.filter(team=team.id).aggregate(Avg("skill"))
     return average_skill if average_skill else 0
 
 
 def validate_teamsheet_team(*, team: Team, team_sheet: TeamSheet):
     # TODO Replicate logic in input serializer
     if team != team_sheet.team:
-        raise ValidationError(
-            f"Team sheet({team_sheet.id}) doesn't belong to team({team_sheet.team.id})!"
-        )
+        raise ValidationError(f"Team sheet({team_sheet.id}) doesn't belong to team({team_sheet.team.id})!")
     team_sheet_positions = [
         team_sheet.right_attacker,
         team_sheet.left_attacker,
@@ -38,9 +36,7 @@ def validate_teamsheet_team(*, team: Team, team_sheet: TeamSheet):
         team_sheet.goalkeeper,
     ]
     if None in team_sheet_positions:
-        raise ValidationError(
-            f"Can't play a match with less than 5 players in team sheet!"
-        )
+        raise ValidationError("Can't play a match with less than 5 players in team sheet!")
 
 
 def sell_players(*, team: Team, players_to_sell: list[int]):

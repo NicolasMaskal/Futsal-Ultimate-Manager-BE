@@ -5,17 +5,17 @@ import names
 from django.contrib.auth.models import AnonymousUser
 from django.db.models import QuerySet
 
-from .. import models
+from ...users.models import User
 from ..constants import (
-    MULTIPLIER_PLAYER_FAV_POS,
-    MULTIPLIER_GK_INFIELD,
     MULTIPLIER_DIFFERENT_INFIELD_POS,
-    MULTIPLIER_INFIELD_AS_GK, STAMINA_EFFECT,
+    MULTIPLIER_GK_INFIELD,
+    MULTIPLIER_INFIELD_AS_GK,
+    MULTIPLIER_PLAYER_FAV_POS,
+    STAMINA_EFFECT,
 )
 from ..filters import PlayerFilter
-from ..models import PlayerPosition, Player, Team
+from ..models import Player, PlayerPosition, Team
 from .business_models import TeamSheetPosition
-from ...users.models import User
 
 
 class PlayerReadService:
@@ -56,7 +56,7 @@ class PlayerGenerator:
         player_name = self.generate_random_name()
         player_position = self._generate_random_pos()
         player_skill = self._generate_random_skill()
-        player = models.Player(
+        player = Player(
             name=player_name,
             preferred_position=player_position,
             team=self.team,
@@ -93,6 +93,8 @@ class PlayerSkillCalculator:
         return self.player.preferred_position in self.cur_pos.value
 
     def _apply_multiplier(self, multiplier: float):
+        if self._res_skill:
+            raise ValueError("Programming error, res_skill is None!")
         self._res_skill = round(multiplier * self._res_skill)
 
     def _apply_stamina_effect(self):

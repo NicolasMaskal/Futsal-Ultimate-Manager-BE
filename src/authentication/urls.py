@@ -1,11 +1,6 @@
-from django.urls import include, path
+from django.urls import path
 
-from .apis import (
-    UserJwtLoginApi,
-    UserJwtLogoutApi,
-    UserMeApi,
-    UserJwtRegisterApi,
-)
+from .apis import UserJwtLoginApi, UserJwtLogoutApi, UserJwtRegisterApi, UserMeApi
 
 urlpatterns = [
     path("register/", UserJwtRegisterApi.as_view(), name="register"),

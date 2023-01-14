@@ -1,4 +1,4 @@
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.test import TestCase
@@ -10,7 +10,6 @@ from src.users.services import user_create
 
 
 class UserJwtLoginTests(TestCase):
-
     def setUp(self):
         self.client = APIClient()
 

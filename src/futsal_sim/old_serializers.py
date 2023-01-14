@@ -2,8 +2,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from rest_framework import serializers
-from futsal_sim.models import Player, Team, TeamSheet, MatchResult
-from futsal_sim.services import team_service, player_service
+
+from futsal_sim.models import MatchResult, Player, Team, TeamSheet
+from futsal_sim.services import player_service, team_service
 
 
 class PlayerSerializer(serializers.ModelSerializer):

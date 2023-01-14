@@ -1,6 +1,7 @@
-from ..models import TeamSheet
-from .player_service import PlayerSkillCalculator, PlayerGenerator
-from .business_models import TeamSheetPosition, CpuTeamSheetNames
+from src.futsal_sim.models import TeamSheet
+
+from .business_models import CpuTeamSheetNames, TeamSheetPosition
+from .player_service import PlayerGenerator, PlayerSkillCalculator
 
 
 def calc_teamsheet_average_skill(team_sheet: TeamSheet) -> int:
