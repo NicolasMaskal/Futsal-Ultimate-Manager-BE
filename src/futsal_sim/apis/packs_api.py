@@ -14,8 +14,8 @@ class TeamBuyPackApi(ApiAuthMixin, APIView):
     class InputSerializer(serializers.Serializer):
         pack_type = serializers.ChoiceField(choices=["gold", "silver", "bronze"])
 
-    def post(self, request: Request, pk: str):
-        team = TeamCRUDService(user=request.user).team_retrieve(team_id=int(pk))
+    def post(self, request: Request, team_id: int):
+        team = TeamCRUDService(user=request.user).team_retrieve(team_id=team_id)
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 

@@ -10,9 +10,9 @@ router.register(r"teams", TeamCRUDApi, "teams")
 
 
 urlpatterns = [
-    path("players/", PlayerListApi.as_view(), name="players"),
-    path("teams/<int:pk>/buy-pack/", TeamBuyPackApi.as_view(), name="team-buy-pack"),
-    path("teams/<int:pk>/sell-players/", SellPlayersApi.as_view(), name="team-sell-players"),
+    path("teams/<int:team_id>/players/", PlayerListApi.as_view(), name="team-players"),
+    path("teams/<int:team_id>/buy-pack/", TeamBuyPackApi.as_view(), name="team-buy-pack"),
+    path("teams/<int:team_id>/sell-players/", SellPlayersApi.as_view(), name="team-sell-players"),
 ]
 
 urlpatterns += router.urls

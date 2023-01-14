@@ -63,10 +63,10 @@ class TeamCRUDApi(ApiAuthMixin, ViewSet):
 
 
 class SellPlayersApi(ApiAuthMixin, APIView):
-    def post(self, request: Request, pk: int):
+    def post(self, request: Request, team_id: int):
         class InputSerializer(serializers.Serializer):
             players: Field = serializers.ListSerializer(
-                child=serializers.PrimaryKeyRelatedField(queryset=Player.objects.filter(team_id=pk)),
+                child=serializers.PrimaryKeyRelatedField(queryset=Player.objects.filter(team_id=team_id)),
                 allow_empty=False,
                 allow_null=False,
             )
@@ -74,7 +74,7 @@ class SellPlayersApi(ApiAuthMixin, APIView):
         input_serializer = InputSerializer(data=request.data)
         input_serializer.is_valid(raise_exception=True)
 
-        team = TeamCRUDService(user=request.user).team_retrieve(team_id=pk)
+        team = TeamCRUDService(user=request.user).team_retrieve(team_id=team_id)
         team = team_sell_players(team=team, player_ids=input_serializer.data["players"])
 
         output_serializer = TeamOutputSerializer(team)

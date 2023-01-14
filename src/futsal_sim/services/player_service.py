@@ -1,6 +1,5 @@
 from typing import Optional
 
-from django.contrib.auth.models import AnonymousUser
 from django.db.models import QuerySet
 
 from src.futsal_sim.constants import (
@@ -17,24 +16,17 @@ from src.users.models import User
 
 
 class PlayerReadService:
-    # TODO rewrite
-    def __init__(self, user: User):
+    def __init__(self, team: Team, user: User):
         self.user = user
+        self.team = team
 
     def query_set(self) -> QuerySet[Player]:
-        if isinstance(self.user, AnonymousUser) or self.user.is_admin:
-            return Player.objects.all()
-        else:
-            teams = Team.objects.filter(owner=self.user)
-            return Player.objects.filter(team__in=teams)
+        return Player.objects.filter(team=self.team)
 
     def player_list(self, *, filters=None) -> QuerySet[Player]:
         filters = filters or {}
         qs = self.query_set()
         return PlayerFilter(filters, qs).qs
-
-    def player_get(self, *, player_id: int) -> Player:
-        return self.query_set().get(player_id)
 
 
 class PlayerSkillCalculator:
