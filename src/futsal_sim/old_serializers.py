@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from rest_framework import serializers
+from rest_framework.fields import Field
 
 from futsal_sim.models import MatchResult, Player, Team, TeamSheet
 from futsal_sim.services import player_service, team_service
@@ -37,7 +38,7 @@ class MatchResultSerializer(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     # So that owner isn't a required field when creating a team (is automatically set in perform_create)
-    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    owner: Field = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Team
