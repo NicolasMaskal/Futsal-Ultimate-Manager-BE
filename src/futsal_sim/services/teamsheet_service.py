@@ -1,8 +1,89 @@
-from src.futsal_sim.models import TeamSheet
+from django.db.models import QuerySet
+from rest_framework.generics import get_object_or_404
 
-from .business_models import CpuTeamSheetNames, TeamSheetPosition
-from .generators import PlayerGenerator
+from src.common.services import model_update
+from src.futsal_sim.filters import TeamSheetFilter
+from src.futsal_sim.models import Team, TeamSheet
+
+from .business_models import TeamSheetPosition
 from .player_service import PlayerSkillCalculator
+
+
+class TeamSheetCRUDService:
+    def __init__(self, *, team: Team):
+        self.team = team
+
+    def query_set(self) -> QuerySet[TeamSheet]:
+        return TeamSheet.objects.filter(team=self.team)
+
+    def teamsheet_list(self, filters=None) -> QuerySet[TeamSheet]:
+        filters = filters or {}
+        qs = self.query_set()
+        return TeamSheetFilter(filters, qs).qs
+
+    def teamsheet_retrieve(self, *, teamsheet_id: int):
+        return get_object_or_404(self.query_set(), id=teamsheet_id)
+
+    def teamsheet_create(
+        self,
+        *,
+        name: str,
+        right_attacker: int,
+        left_attacker: int,
+        right_defender: int,
+        left_defender: int,
+        goalkeeper: int
+    ) -> TeamSheet:
+        team_sheet = TeamSheet(
+            name=name,
+            right_attacker_id=right_attacker,
+            left_attacker_id=left_attacker,
+            right_defender_id=right_defender,
+            left_defender_id=left_defender,
+            goalkeeper_id=goalkeeper,
+            team=self.team,
+        )
+        team_sheet.full_clean()
+        team_sheet.save()
+
+        return team_sheet
+
+    def teamsheet_update(
+        self,
+        *,
+        teamsheet_id: int,
+        name: str,
+        right_attacker: int,
+        left_attacker: int,
+        right_defender: int,
+        left_defender: int,
+        goalkeeper: int
+    ) -> TeamSheet:
+        teamsheet = self.teamsheet_retrieve(teamsheet_id=teamsheet_id)
+        teamsheet, _ = model_update(
+            instance=teamsheet,
+            fields=[
+                "name",
+                "right_attacker_id",
+                "left_attacker_id",
+                "right_defender_id",
+                "left_defender_id",
+                "goalkeeper_id",
+            ],
+            data={
+                "name": name,
+                "right_attacker_id": right_attacker,
+                "left_attacker_id": left_attacker,
+                "right_defender_id": right_defender,
+                "left_defender_id": left_defender,
+                "goalkeeper_id": goalkeeper,
+            },
+        )
+        return teamsheet
+
+    def teamsheet_delete(self, teamsheet_id: int):
+        teamsheet = self.teamsheet_retrieve(teamsheet_id=teamsheet_id)
+        teamsheet.delete()
 
 
 def calc_teamsheet_average_skill(team_sheet: TeamSheet) -> int:
@@ -17,13 +98,3 @@ def calc_teamsheet_average_skill(team_sheet: TeamSheet) -> int:
             skill_total = PlayerSkillCalculator(player=player, cur_pos=position).calc_skill_in_pos()
 
     return round(skill_total / player_amount) if player_amount != 0 else 0
-
-
-def generate_random_cpu_teamsheet() -> CpuTeamSheetNames:
-    return CpuTeamSheetNames(
-        right_attacker=PlayerGenerator.generate_random_name(),
-        left_attacker=PlayerGenerator.generate_random_name(),
-        right_defender=PlayerGenerator.generate_random_name(),
-        left_defender=PlayerGenerator.generate_random_name(),
-        goalkeeper=PlayerGenerator.generate_random_name(),
-    )

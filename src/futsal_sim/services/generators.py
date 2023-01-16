@@ -9,10 +9,21 @@ from src.futsal_sim.constants import (
     GK_GENERATION_PERC_CHANCE,
 )
 from src.futsal_sim.models import Player, PlayerPosition, Team
+from src.futsal_sim.services.business_models import CpuTeamSheetNames
 
 
 def generate_random_cpu_team_name() -> str:
     return "FC " + faker.Faker().city()
+
+
+def generate_random_cpu_teamsheet() -> CpuTeamSheetNames:
+    return CpuTeamSheetNames(
+        right_attacker=PlayerGenerator.generate_random_name(),
+        left_attacker=PlayerGenerator.generate_random_name(),
+        right_defender=PlayerGenerator.generate_random_name(),
+        left_defender=PlayerGenerator.generate_random_name(),
+        goalkeeper=PlayerGenerator.generate_random_name(),
+    )
 
 
 class PlayerGenerator:

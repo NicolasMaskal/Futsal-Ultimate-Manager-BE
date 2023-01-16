@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from src.futsal_sim.models import Player, Team
+from src.futsal_sim.models import Player, Team, TeamSheet
 from src.futsal_sim.services.team_service import calc_team_skill
 
 
@@ -33,6 +33,23 @@ class PlayerOutputSerializer(serializers.ModelSerializer):
             "matches_played",
             "goals_scored",
             "assists_made",
-            "team_id",
             "sell_price",
         )
+
+
+class TeamSheetOutputSerializer(serializers.ModelSerializer):
+    right_attacker = PlayerOutputSerializer()
+    left_attacker = PlayerOutputSerializer()
+    right_defender = PlayerOutputSerializer()
+    left_defender = PlayerOutputSerializer()
+    goalkeeper = PlayerOutputSerializer()
+
+    class Meta:
+        model = TeamSheet
+        fields = ("id", "name", "right_attacker", "left_attacker", "right_defender", "left_defender", "goalkeeper")
+
+
+class TeamSheetShortOutputSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TeamSheet
+        fields = ("id", "name")

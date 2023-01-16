@@ -10,6 +10,7 @@ from src.futsal_sim.constants import (
     GOLD_LOWER_BOUND,
     GOLD_PRICE,
     GOLD_UPPER_BOUND,
+    MAX_SQUAD_VALID_SIZE,
     PLAYER_AMOUNT_IN_PACK,
     SILVER_LOWER_BOUND,
     SILVER_PRICE,
@@ -57,9 +58,15 @@ def _validate_team_coins(*, team: Team, pack_type: PackType):
         raise ValidationError("Not enough coins to buy this pack!")
 
 
+def _validate_team_size(*, team: Team):
+    if team.players.count() + PLAYER_AMOUNT_IN_PACK > MAX_SQUAD_VALID_SIZE:
+        raise ValidationError("Unable to buy pack, team would be over max squad size!")
+
+
 def buy_pack(*, team: Team, pack_type: str) -> list:
     pack_type_obj = get_pack_by_pack_type(pack_type)
     _validate_team_coins(team=team, pack_type=pack_type_obj)
+    _validate_team_size(team=team)
     team.coins -= pack_type_obj.value
 
     lower_b, upper_b = _get_lower_upper_bounds(team, pack_type_obj)

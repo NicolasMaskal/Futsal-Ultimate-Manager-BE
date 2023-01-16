@@ -44,6 +44,10 @@ def model_update(*, instance: DjangoModelType, fields: List[str], data: Dict[str
         # If field is not an actual model field, raise an error
         model_field = model_fields.get(field)
 
+        if model_field is None and field.endswith("_id"):
+            field_without_id = field[:-3]
+            model_field = model_fields.get(field_without_id)
+
         assert model_field is not None, f"{field} is not part of {instance.__class__.__name__} fields."
 
         # If we have m2m field, handle differently
