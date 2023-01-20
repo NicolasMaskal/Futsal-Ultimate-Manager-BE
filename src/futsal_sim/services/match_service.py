@@ -29,21 +29,20 @@ from .teamsheet_service import calc_sheet_lineup_average_skill, create_lineup_fr
 @dataclass
 class PlayerMatchMomentCreator:
     match_result: MatchResult
-    lineup: TeamLineup
     goal_minutes: list[int] = dataclasses.field(default_factory=lambda: [])
 
-    def create_moments(self, goal_amount: int) -> list[int]:
+    def create_moments(self, *, goal_amount: int, lineup: TeamLineup):
         """
         :param goal_amount: how many goal moments should be created for passed lineup
-        :return: minutes when the moments happened
+        :param lineup: set of players for which goal moment will be created for
         """
         for _ in range(goal_amount):
-            self._create_moment()
+            self._create_moment(lineup)
         return self.goal_minutes
 
-    def _create_moment(self):
-        scorer, scorer_pos = self._generate_scorer()
-        assister = self._generate_assister(scorer_pos)
+    def _create_moment(self, lineup: TeamLineup):
+        scorer, scorer_pos = self._generate_scorer(lineup)
+        assister = self._generate_assister(lineup, scorer_pos)
 
         minute = self._generate_random_minute()
         MatchGoal(minute=minute, goal_scorer=scorer, assister=assister, match=self.match_result).save()
@@ -56,23 +55,25 @@ class PlayerMatchMomentCreator:
         self.goal_minutes.append(random_minute)
         return random_minute
 
-    def _generate_scorer(self) -> Tuple[Player, TeamSheetPosition]:
+    @staticmethod
+    def _generate_scorer(lineup: TeamLineup) -> Tuple[Player, TeamSheetPosition]:
         """
         :return: Scorer of goal
         """
         position = PositionFactory.generate_goal_scorer_position()
-        player = getattr(self.lineup, position.value)
+        player = getattr(lineup, position.value)
         player.goals_scored += 1
         player.save()
 
         return player, position
 
-    def _generate_assister(self, scorer_pos: TeamSheetPosition) -> Optional[Player]:
+    @staticmethod
+    def _generate_assister(lineup: TeamLineup, scorer_pos: TeamSheetPosition) -> Optional[Player]:
         position = PositionFactory.generate_assist_maker_position(scorer_pos)
 
         player = None
         if position:
-            player = getattr(self.lineup, position.value)
+            player = getattr(lineup, position.value)
             player.assists_made += 1
             player.save()
 
@@ -101,12 +102,9 @@ class MatchInProgress:
         return match_result
 
     def _create_moments(self, match_result: MatchResult):
-        player_moment_creator = PlayerMatchMomentCreator(match_result=match_result, lineup=self.player_lineup)
-        minutes = player_moment_creator.create_moments(self.player_goals)
-        cpu_moment_creator = PlayerMatchMomentCreator(
-            match_result=match_result, lineup=self.player_lineup, goal_minutes=minutes
-        )
-        cpu_moment_creator.create_moments(self.cpu_goals)
+        goal_moment_creator = PlayerMatchMomentCreator(match_result=match_result)
+        goal_moment_creator.create_moments(goal_amount=self.player_goals, lineup=self.player_lineup)
+        goal_moment_creator.create_moments(goal_amount=self.cpu_goals, lineup=self.cpu_lineup)
 
     def _create_match_result(self) -> MatchResult:
         coins = self._update_player_team_with_result()
