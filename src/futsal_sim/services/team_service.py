@@ -3,6 +3,7 @@ from django.db.models import Avg, QuerySet
 from rest_framework.generics import get_object_or_404
 
 from src.common.services import model_update
+from src.common.utils import find_or_fail
 from src.futsal_sim.constants import (
     BASE_COIN_AMOUNT,
     PLAYER_AMOUNT_CREATED_TEAM,
@@ -33,7 +34,7 @@ class TeamCRUDService:
         return TeamFilter(filters, qs).qs
 
     def team_retrieve(self, *, team_id: int) -> Team:
-        return get_object_or_404(self.query_set(), id=team_id)  # TODO implement own get_object_or_404 with message
+        return find_or_fail(self.query_set(), error_message=f"Team with id={team_id} not found!", id=team_id)  # TODO implement own get_object_or_404 with message
 
     def team_create(self, *, name: str) -> Team:
         team = Team(name=name, owner=self.user, coins=BASE_COIN_AMOUNT)

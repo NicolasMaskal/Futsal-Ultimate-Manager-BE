@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404
@@ -18,6 +20,13 @@ def get_object(model_or_queryset, **kwargs):
         return get_object_or_404(model_or_queryset, **kwargs)
     except Http404:
         return None
+
+
+def find_or_fail(model_or_queryset, error_message: Optional[str] = None, **kwargs):
+    try:
+        return get_object_or_404(model_or_queryset, **kwargs)
+    except Http404:
+        raise Http404(error_message)
 
 
 def create_serializer_class(name, fields):

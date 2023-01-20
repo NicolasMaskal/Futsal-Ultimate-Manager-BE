@@ -111,3 +111,19 @@ class MatchResultOutputSerializer(serializers.ModelSerializer):
             "coins_reward",
             "goal_moments",
         )
+
+
+class MatchResultShortOutputSerializer(serializers.ModelSerializer):
+    player_team = TeamShortOutputSerializer()
+    cpu_team = TeamShortOutputSerializer()
+
+    class Meta:
+        model = MatchResult
+        fields = (
+            "id",
+            "date",
+            "player_goals",
+            "cpu_goals",
+            "player_team",
+            "cpu_team",
+        )
