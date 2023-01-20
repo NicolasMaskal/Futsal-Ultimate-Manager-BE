@@ -10,6 +10,8 @@ MAX_GOAL_AMOUNT = 12
 # Used when calculating team skill
 TEAM_SKILL_CALC_PLAYER_AMOUNT = 8
 
+MIN_PLAYER_SKILL = 1
+
 # Formula for calculation: BASE_PRICE - team_avg + self.skill
 BASE_PRICE_FOR_AVERAGE_PLAYER = 20
 

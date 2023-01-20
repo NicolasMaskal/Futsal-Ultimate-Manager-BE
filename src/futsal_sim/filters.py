@@ -10,9 +10,11 @@ class PlayerFilter(django_filters.FilterSet):
 
 
 class TeamFilter(django_filters.FilterSet):
+    owner = django_filters.NumberFilter(field_name='owner__id')
+
     class Meta:
         model = Team
-        fields = ("name",)
+        fields = ["name", "owner"]
 
 
 class TeamSheetFilter(django_filters.FilterSet):

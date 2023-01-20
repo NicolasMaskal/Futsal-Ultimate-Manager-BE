@@ -13,7 +13,7 @@ from ..users.models import User
 from .constants import (
     BASE_PRICE_FOR_AVERAGE_PLAYER,
     MAX_SQUAD_VALID_SIZE,
-    PLAYER_AMOUNT_TEAM_SHEET,
+    PLAYER_AMOUNT_TEAM_SHEET, MIN_PLAYER_SKILL,
 )
 
 
@@ -43,11 +43,23 @@ class Team(BaseModel):
         return self.wins + self.draws + self.loses
 
 
+class CPUTeam(Team):
+    skill = models.IntegerField(validators=[MinValueValidator(MIN_PLAYER_SKILL)])
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                name="%(app_label)s_%(class)s_owner_valid",
+                check=models.Q(owner__active_team__isnull=True),
+            )
+        ]
+
+
 class Player(BaseModel):
     name = models.CharField(max_length=128)
     preferred_position = models.CharField(choices=PlayerPosition.choices, max_length=32)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, related_name="players")
-    skill = models.IntegerField(validators=[MinValueValidator(1)])
+    skill = models.IntegerField(validators=[MinValueValidator(MIN_PLAYER_SKILL)])
 
     matches_played = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     goals_scored = models.IntegerField(default=0, validators=[MinValueValidator(0)])

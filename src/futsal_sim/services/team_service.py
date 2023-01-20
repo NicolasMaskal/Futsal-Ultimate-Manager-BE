@@ -1,6 +1,5 @@
-from django.core.exceptions import ValidationError
-from django.db.models import Avg, QuerySet
-from rest_framework.generics import get_object_or_404
+from django.core.exceptions import ValidationError, PermissionDenied
+from django.db.models import Avg, QuerySet, Q
 
 from src.common.services import model_update
 from src.common.utils import find_or_fail
@@ -26,7 +25,7 @@ class TeamCRUDService:
         if self.user.is_admin:
             return Team.objects.all()
         else:
-            return Team.objects.filter(owner=self.user)
+            return Team.objects.filter(Q(owner=self.user) | Q(owner__isnull=True))
 
     def team_list(self, *, filters=None) -> QuerySet[Team]:
         filters = filters or {}
@@ -34,7 +33,9 @@ class TeamCRUDService:
         return TeamFilter(filters, qs).qs
 
     def team_retrieve(self, *, team_id: int) -> Team:
-        return find_or_fail(self.query_set(), error_message=f"Team with id={team_id} not found!", id=team_id)  # TODO implement own get_object_or_404 with message
+        return find_or_fail(
+            self.query_set(), error_message=f"Team with id={team_id} not found!", id=team_id
+        )
 
     def team_create(self, *, name: str) -> Team:
         team = Team(name=name, owner=self.user, coins=BASE_COIN_AMOUNT)
@@ -55,6 +56,7 @@ class TeamCRUDService:
 
     def team_update(self, *, team_id: int, name: str) -> Team:
         team = self.team_retrieve(team_id=team_id)
+        validate_owner_of_team_perms(team=team, user=self.user)
         team, _ = model_update(instance=team, fields=["name"], data={"name": name})
         return team
 
@@ -64,7 +66,21 @@ class TeamCRUDService:
         team_id: int,
     ):
         team = self.team_retrieve(team_id=team_id)
+        validate_owner_of_team_perms(team=team, user=self.user)
         team.delete()
+
+
+def validate_owner_of_team_perms(*, user: User, team: Team):
+    """
+    Validates that team is user owned, and that team is user-owned by user or is admin.
+    If team is
+    :param user:
+    :param team:
+    :return:
+    """
+
+    if not team.owner or (not user.is_admin and team.owner != user):
+        raise PermissionDenied("Only team owners can perform this action!")
 
 
 def calc_team_skill(team: Team) -> int:
@@ -77,7 +93,8 @@ def calc_team_skill(team: Team) -> int:
     return round(team_skill) if team_skill else 0
 
 
-def team_sell_players(*, team: Team, player_ids: list[int]) -> Team:
+def team_sell_players(*, team: Team, player_ids: list[int], user: User) -> Team:
+    validate_owner_of_team_perms(team=team, user=user)
     new_squad_size = team.players.count() - len(player_ids)
     if new_squad_size < PLAYER_AMOUNT_TEAM_SHEET:
         raise ValidationError(f"You can't have less than {PLAYER_AMOUNT_TEAM_SHEET} players left!")

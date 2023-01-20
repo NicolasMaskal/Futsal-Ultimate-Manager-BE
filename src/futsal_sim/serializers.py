@@ -25,7 +25,7 @@ class TeamOutputSerializer(serializers.ModelSerializer):
 class TeamShortOutputSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ("id", "name")
+        fields = ("id", "name", "owner")
 
 
 class PlayerOutputSerializer(serializers.ModelSerializer):

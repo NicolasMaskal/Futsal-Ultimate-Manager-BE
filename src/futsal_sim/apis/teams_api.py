@@ -8,15 +8,16 @@ from rest_framework.viewsets import ViewSet
 from src.api.mixins import ApiAuthMixin
 from src.futsal_sim.models import Player
 from src.futsal_sim.serializers import TeamOutputSerializer, TeamShortOutputSerializer
-from src.futsal_sim.services.team_service import TeamCRUDService, team_sell_players
+from src.futsal_sim.services.team_service import TeamCRUDService, team_sell_players, validate_owner_of_team_perms
 
 
-class TeamCRUDApi(ApiAuthMixin, ViewSet):
+class TeamApi(ApiAuthMixin, ViewSet):
     class InputSerializer(serializers.Serializer):
         name = serializers.CharField()
 
     class FilterSerializer(serializers.Serializer):
-        name = serializers.CharField(required=False, allow_null=True, default=None)
+        name = serializers.CharField(required=False)
+        owner = serializers.IntegerField(required=False)
 
     def retrieve(self, request: Request, pk: str):
         service = TeamCRUDService(user=request.user)
@@ -39,9 +40,9 @@ class TeamCRUDApi(ApiAuthMixin, ViewSet):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         service = TeamCRUDService(user=request.user)
-        created_team = service.team_update(team_id=pk, name=serializer.data["name"])
+        updated_team = service.team_update(team_id=pk, name=serializer.data["name"])
 
-        serializer_output = TeamOutputSerializer(created_team)
+        serializer_output = TeamOutputSerializer(updated_team)
 
         return Response(data=serializer_output.data, status=status.HTTP_200_OK)
 
@@ -75,7 +76,7 @@ class SellPlayersApi(ApiAuthMixin, APIView):
         input_serializer.is_valid(raise_exception=True)
 
         team = TeamCRUDService(user=request.user).team_retrieve(team_id=team_id)
-        team = team_sell_players(team=team, player_ids=input_serializer.data["players"])
+        team = team_sell_players(team=team, player_ids=input_serializer.data["players"], user=request.user)
 
         output_serializer = TeamOutputSerializer(team)
         return Response(output_serializer.data)

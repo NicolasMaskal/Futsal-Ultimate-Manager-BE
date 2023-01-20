@@ -9,7 +9,7 @@ from rest_framework.views import exception_handler
 from src.core.exceptions import ApplicationError
 
 
-def custom_exception_handler(exc: Exception, ctx):
+def custom_exception_handler(exc, ctx):
     """
     {
         "message": "Error message",
@@ -23,7 +23,7 @@ def custom_exception_handler(exc: Exception, ctx):
         exc = exceptions.NotFound(exc.args)
 
     if isinstance(exc, PermissionDenied):
-        exc = exceptions.PermissionDenied()
+        exc = exceptions.PermissionDenied(exc.args)
 
     response = exception_handler(exc, ctx)
 

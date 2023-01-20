@@ -1,15 +1,23 @@
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Q
 
 from src.common.utils import find_or_fail
-from src.futsal_sim.models import Team, MatchResult
+from src.futsal_sim.models import MatchResult, Team
+from src.users.models import User
 
 
 class MatchResultReadService:
-    def __init__(self, team: Team):
+    def __init__(self, team: Team, user: User):
         self.team = team
+        self.user = user
 
     def query_set(self) -> QuerySet[MatchResult]:
-        return MatchResult.objects.filter(player_team=self.team)
+        """
+        User can only view matches for teams they own.
+        :return:
+        """
+        return MatchResult.objects.filter(
+            Q(player_team=self.team) | Q(cpu_team=self.team, player_team__owner=self.user)
+        )
 
     def match_list(self) -> QuerySet[MatchResult]:
         return self.query_set()

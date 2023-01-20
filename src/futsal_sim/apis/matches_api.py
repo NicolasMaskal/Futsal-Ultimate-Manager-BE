@@ -5,7 +5,10 @@ from rest_framework.viewsets import ViewSet
 
 from src.api.mixins import ApiAuthMixin
 from src.futsal_sim.models import TeamSheet
-from src.futsal_sim.serializers import MatchResultOutputSerializer, MatchResultShortOutputSerializer
+from src.futsal_sim.serializers import (
+    MatchResultOutputSerializer,
+    MatchResultShortOutputSerializer,
+)
 from src.futsal_sim.services.match_result_service import MatchResultReadService
 from src.futsal_sim.services.match_service import play_match_against_cpu
 from src.futsal_sim.services.team_service import TeamCRUDService
@@ -37,7 +40,7 @@ class MatchApi(ApiAuthMixin, ViewSet):
 
     def list(self, request: Request, team_pk: str):
         team = TeamCRUDService(user=request.user).team_retrieve(team_id=int(team_pk))
-        matches = MatchResultReadService(team=team).match_list()
+        matches = MatchResultReadService(team=team, user=request.user).match_list()
         serializer = MatchResultShortOutputSerializer(matches, many=True)
         return Response(serializer.data)
 

@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple
 import faker
 import names
 
+from src.common.utils import get_object
 from src.futsal_sim.constants import (
     ASSIST_PERC,
     ATT_GENERATION_PERC_CHANCE,
@@ -24,9 +25,9 @@ from src.futsal_sim.constants import (
     GK_ASSIST_PERC,
     GK_GENERATION_PERC_CHANCE,
     GK_GOAL_PERC,
-    MAX_CPU_DIFFICULTY_RATING,
+    MAX_CPU_DIFFICULTY_RATING, MIN_PLAYER_SKILL,
 )
-from src.futsal_sim.models import Player, PlayerPosition, Team, TeamLineup
+from src.futsal_sim.models import Player, PlayerPosition, Team, TeamLineup, CPUTeam
 from src.futsal_sim.services.business_models import TeamSheetPosition
 
 
@@ -73,6 +74,7 @@ class TeamOpponentFactory:
     def __init__(self, *, player_skill: int, difficulty_rating: int):
         self.player_team_skill = player_skill
         self.difficulty_rating = difficulty_rating
+        self.cpu_team_skill = self._calc_cpu_skill()
 
     def _calc_cpu_skill(self) -> int:
         cpu_average = round(self.player_team_skill - 10 + (self.difficulty_rating * 2))
@@ -90,6 +92,12 @@ class TeamOpponentFactory:
         team.loses = max(0, round(matches_played * (0.33 - 0.06 * difficulty_diff)))
 
     def create_cpu_team(self) -> Tuple[Team, TeamLineup]:
+        team, lineup = self._find_existing_cpu_by_skill()
+        if team:
+            return team, lineup
+        return self._generate_cpu_team()
+
+    def _generate_cpu_team(self) -> Tuple[Team, TeamLineup]:
         name = self._generate_random_team_name()
         team = Team(name=name)
         self._generate_match_stats_for_team(team)
@@ -97,10 +105,16 @@ class TeamOpponentFactory:
         lineup = self._generate_lineup(team)
         return team, lineup
 
+    def _find_existing_cpu_by_skill(self) -> Tuple[Optional[Team], Optional[TeamLineup]]:
+        cpu_team = get_object(CPUTeam, skill=self.cpu_team_skill)
+        if cpu_team:
+            return cpu_team, cpu_team.teamlineup_set[0]
+
+        return None, None
+
     def _generate_lineup(self, team: Team) -> TeamLineup:
-        cpu_team_skill = self._calc_cpu_skill()
-        lower_b = round(cpu_team_skill - CPU_PLAYER_SKILL_VARIANCE_MULTIPLIER * cpu_team_skill)
-        upper_b = round(cpu_team_skill + CPU_PLAYER_SKILL_VARIANCE_MULTIPLIER * cpu_team_skill)
+        lower_b = round(self.cpu_team_skill - CPU_PLAYER_SKILL_VARIANCE_MULTIPLIER * self.cpu_team_skill)
+        upper_b = round(self.cpu_team_skill + CPU_PLAYER_SKILL_VARIANCE_MULTIPLIER * self.cpu_team_skill)
         player_generator = PlayerFactory(
             team=team,
             lower_b=lower_b,
@@ -194,7 +208,7 @@ class PlayerFactory:
 
     def _generate_random_skill(self) -> int:
         res = random.randint(self.skill_lower_b, self.skill_upper_b)
-        return max(res, 0)
+        return max(res, MIN_PLAYER_SKILL)
 
     @staticmethod
     def _generate_random_pos() -> PlayerPosition:
