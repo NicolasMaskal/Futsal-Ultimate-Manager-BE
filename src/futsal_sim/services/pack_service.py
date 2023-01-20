@@ -17,7 +17,7 @@ from src.futsal_sim.constants import (
     SILVER_UPPER_BOUND,
 )
 from src.futsal_sim.models import Team
-from src.futsal_sim.services.generators import PlayerGenerator
+from src.futsal_sim.services.factories import PlayerFactory
 from src.futsal_sim.services.team_service import calc_team_skill
 
 
@@ -70,8 +70,8 @@ def buy_pack(*, team: Team, pack_type: str) -> list:
     team.coins -= pack_type_obj.value
 
     lower_b, upper_b = _get_lower_upper_bounds(team, pack_type_obj)
-    generator = PlayerGenerator(team=team, lower_end=lower_b, upper_end=upper_b)
-    players = generator.generate_players(PLAYER_AMOUNT_IN_PACK)
+    generator = PlayerFactory(team=team, lower_b=lower_b, upper_b=upper_b)
+    players = generator.create_players(PLAYER_AMOUNT_IN_PACK)
 
     team.save()  # Save spent coins
     return players

@@ -1,9 +1,10 @@
 from django.db.models import QuerySet
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
 
 from src.common.services import model_update
 from src.futsal_sim.filters import TeamSheetFilter
-from src.futsal_sim.models import Team, TeamSheet
+from src.futsal_sim.models import Team, TeamLineup, TeamPlayersInPositions, TeamSheet
 
 from .business_models import TeamSheetPosition
 from .player_service import PlayerSkillCalculator
@@ -86,15 +87,33 @@ class TeamSheetCRUDService:
         teamsheet.delete()
 
 
-def calc_teamsheet_average_skill(team_sheet: TeamSheet) -> int:
+def calc_sheet_lineup_average_skill(team_sheet_or_lineup: TeamPlayersInPositions) -> int:
     player_amount = 0
     skill_total = 0
 
     position: TeamSheetPosition
     for position in TeamSheetPosition:
-        player = getattr(team_sheet, position.value)
+        player = getattr(team_sheet_or_lineup, position.value)
         if player:
             player_amount += 1
-            skill_total = PlayerSkillCalculator(player=player, cur_pos=position).calc_skill_in_pos()
+            skill_total += PlayerSkillCalculator(player=player, cur_pos=position).calc_skill_in_pos()
 
     return round(skill_total / player_amount) if player_amount != 0 else 0
+
+
+def validate_teamsheet_can_play_match(team_sheet: TeamSheet):
+    if not team_sheet.is_ready_for_match:
+        raise ValidationError("Team sheet isn't ready for match!")
+
+
+def create_lineup_from_sheet(team_sheet: TeamSheet) -> TeamLineup:
+    lineup = TeamLineup(
+        team=team_sheet.team,
+        right_attacker=team_sheet.right_attacker,
+        left_attacker=team_sheet.left_attacker,
+        right_defender=team_sheet.right_defender,
+        left_defender=team_sheet.left_defender,
+        goalkeeper=team_sheet.goalkeeper,
+    )
+    lineup.save()
+    return lineup

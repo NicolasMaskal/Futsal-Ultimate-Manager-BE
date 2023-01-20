@@ -7,7 +7,6 @@ from src.futsal_sim.constants import (
     MULTIPLIER_GK_INFIELD,
     MULTIPLIER_INFIELD_AS_GK,
     MULTIPLIER_PLAYER_FAV_POS,
-    STAMINA_EFFECT,
 )
 from src.futsal_sim.filters import PlayerFilter
 from src.futsal_sim.models import Player, Team
@@ -43,10 +42,6 @@ class PlayerSkillCalculator:
             raise ValueError("Programming error, res_skill is None!")
         self._res_skill = round(multiplier * self._res_skill)
 
-    def _apply_stamina_effect(self):
-        multiplier = self.player.stamina_left / 100
-        self._apply_multiplier(multiplier)
-
     def _apply_playing_as_gk(self):
         multiplier = MULTIPLIER_INFIELD_AS_GK
         if self._playing_in_fav_pos():
@@ -64,9 +59,6 @@ class PlayerSkillCalculator:
 
     def calc_skill_in_pos(self) -> int:
         self._res_skill = self.player.skill
-
-        if STAMINA_EFFECT:
-            self._apply_stamina_effect()
 
         if self.cur_pos == TeamSheetPosition.GOALKEEPER:
             self._apply_playing_as_gk()

@@ -13,7 +13,7 @@ from src.futsal_sim.constants import (
 )
 from src.futsal_sim.filters import TeamFilter
 from src.futsal_sim.models import Player, Team, TeamSheet
-from src.futsal_sim.services.generators import PlayerGenerator
+from src.futsal_sim.services.factories import PlayerFactory
 from src.users.models import User
 
 
@@ -33,18 +33,18 @@ class TeamCRUDService:
         return TeamFilter(filters, qs).qs
 
     def team_retrieve(self, *, team_id: int) -> Team:
-        return get_object_or_404(self.query_set(), id=team_id)
+        return get_object_or_404(self.query_set(), id=team_id)  # TODO implement own get_object_or_404 with message
 
     def team_create(self, *, name: str) -> Team:
         team = Team(name=name, owner=self.user, coins=BASE_COIN_AMOUNT)
         team.full_clean()
         team.save()
 
-        generator = PlayerGenerator(
-            team=team, lower_end=SKILL_LOWER_BOUND_CREATED_TEAM, upper_end=SKILL_UPPER_BOUND_CREATED_TEAM
+        generator = PlayerFactory(
+            team=team, lower_b=SKILL_LOWER_BOUND_CREATED_TEAM, upper_b=SKILL_UPPER_BOUND_CREATED_TEAM
         )
 
-        generator.generate_players(PLAYER_AMOUNT_CREATED_TEAM)
+        generator.create_players(PLAYER_AMOUNT_CREATED_TEAM)
 
         if not self.user.active_team:
             self.user.active_team = team
@@ -66,14 +66,14 @@ class TeamCRUDService:
         team.delete()
 
 
-def calc_team_skill(team: Team) -> float:
+def calc_team_skill(team: Team) -> int:
     # Take x most skillful players and calculate their skill average
     team_skill = (
         Player.objects.filter(team=team.id)
         .order_by("-skill")[:TEAM_SKILL_CALC_PLAYER_AMOUNT]
         .aggregate(Avg("skill"))["skill__avg"]
     )
-    return team_skill if team_skill else 0
+    return round(team_skill) if team_skill else 0
 
 
 def validate_teamsheet_team(*, team: Team, team_sheet: TeamSheet):
@@ -107,7 +107,7 @@ def team_sell_players(*, team: Team, player_ids: list[int]) -> Team:
     team_avg = calc_team_skill(team)
     total_sell_price = sum([player.calc_sell_price(team_avg) for player in players])
 
-    player_qs.delete()
+    player_qs.update(owner=None)
 
     new_coin_amount = team.coins + total_sell_price
     team, _ = model_update(instance=team, fields=["coins"], data={"coins": new_coin_amount})
