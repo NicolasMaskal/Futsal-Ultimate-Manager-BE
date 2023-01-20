@@ -100,7 +100,7 @@ class TeamOpponentFactory:
 
     def _generate_cpu_team(self) -> Tuple[Team, TeamLineup]:
         name = self._generate_random_team_name()
-        team = Team(name=name)
+        team = CPUTeam(name=name, skill=self.cpu_team_skill)
         self._generate_match_stats_for_team(team)
         team.save()
         lineup = self._generate_lineup(team)
@@ -109,7 +109,7 @@ class TeamOpponentFactory:
     def _find_existing_cpu_by_skill(self) -> Tuple[Optional[Team], Optional[TeamLineup]]:
         cpu_team = get_object(CPUTeam, skill=self.cpu_team_skill)
         if cpu_team:
-            return cpu_team, cpu_team.teamlineup_set[0]
+            return cpu_team, cpu_team.teamlineup_set.all()[0]
 
         return None, None
 

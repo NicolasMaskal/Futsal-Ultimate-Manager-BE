@@ -143,12 +143,15 @@ class MatchInProgress:
         goal_diff = self.player_goals - self.cpu_goals
         if self.player_goals > self.cpu_goals:
             self.player_team.wins += 1
+            self.cpu_team.loses += 1
             added_coins = added_coins_for_win + goal_diff
         elif self.player_goals == self.cpu_goals:
             self.player_team.draws += 1
+            self.cpu_team.draws += 1
             added_coins = round(added_coins_for_win * MULTIPLIER_COIN_DRAW)
         else:
             self.player_team.loses += 1
+            self.cpu_team.wins += 1
             added_coins = round(added_coins_for_win * MULTIPLIER_COIN_LOSS)
             added_coins += goal_diff
 

@@ -47,14 +47,6 @@ class Team(BaseModel):
 class CPUTeam(Team):
     skill = models.IntegerField(validators=[MinValueValidator(MIN_PLAYER_SKILL)])
 
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                name="%(app_label)s_%(class)s_owner_valid",
-                check=models.Q(owner__active_team__isnull=True),
-            )
-        ]
-
 
 class Player(BaseModel):
     name = models.CharField(max_length=128)
