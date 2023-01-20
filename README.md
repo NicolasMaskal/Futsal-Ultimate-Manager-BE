@@ -1,10 +1,10 @@
-# Futsal Simulator BE
+# Futsal Simulator Backend - Django
 
-# SOCIAL
+# Social
 [![Nico github](https://img.shields.io/badge/GitHub-Nicolas264859-181717.svg?style=flat&logo=github)](https://github.com/Nicolas264859)
 
 
-# CODE
+# Code
 [![Lint & test](https://github.com/Nicolas264859/Futsal-Sim-BE/actions/workflows/django.yml/badge.svg)](https://github.com/Nicolas264859/Futsal-Sim-BE/actions/workflows/django.yml)
 [![python](https://img.shields.io/badge/Python-3.10-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
