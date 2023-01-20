@@ -2,6 +2,7 @@ from typing import Optional
 
 from django.db.models import QuerySet
 
+from src.common.utils import find_or_fail
 from src.futsal_sim.constants import (
     MULTIPLIER_DIFFERENT_INFIELD_POS,
     MULTIPLIER_GK_INFIELD,
@@ -26,6 +27,9 @@ class PlayerReadService:
         filters = filters or {}
         qs = self.query_set()
         return PlayerFilter(filters, qs).qs
+
+    def player_retrieve(self, *, player_id: int) -> Player:
+        return find_or_fail(self.query_set(), error_message=f"Player with id={player_id} not found!", id=player_id)
 
 
 class PlayerSkillCalculator:
