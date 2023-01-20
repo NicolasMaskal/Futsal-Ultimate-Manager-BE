@@ -1,5 +1,5 @@
-from django.core.exceptions import ValidationError, PermissionDenied
-from django.db.models import Avg, QuerySet, Q
+from django.core.exceptions import PermissionDenied, ValidationError
+from django.db.models import Avg, Q, QuerySet
 
 from src.common.services import model_update
 from src.common.utils import find_or_fail
@@ -33,9 +33,7 @@ class TeamCRUDService:
         return TeamFilter(filters, qs).qs
 
     def team_retrieve(self, *, team_id: int) -> Team:
-        return find_or_fail(
-            self.query_set(), error_message=f"Team with id={team_id} not found!", id=team_id
-        )
+        return find_or_fail(self.query_set(), error_message=f"Team with id={team_id} not found!", id=team_id)
 
     def team_create(self, *, name: str) -> Team:
         team = Team(name=name, owner=self.user, coins=BASE_COIN_AMOUNT)

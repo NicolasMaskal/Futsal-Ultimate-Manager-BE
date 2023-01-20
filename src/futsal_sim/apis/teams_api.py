@@ -8,7 +8,7 @@ from rest_framework.viewsets import ViewSet
 from src.api.mixins import ApiAuthMixin
 from src.futsal_sim.models import Player
 from src.futsal_sim.serializers import TeamOutputSerializer, TeamShortOutputSerializer
-from src.futsal_sim.services.team_service import TeamCRUDService, team_sell_players, validate_owner_of_team_perms
+from src.futsal_sim.services.team_service import TeamCRUDService, team_sell_players
 
 
 class TeamApi(ApiAuthMixin, ViewSet):

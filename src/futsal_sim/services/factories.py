@@ -25,9 +25,10 @@ from src.futsal_sim.constants import (
     GK_ASSIST_PERC,
     GK_GENERATION_PERC_CHANCE,
     GK_GOAL_PERC,
-    MAX_CPU_DIFFICULTY_RATING, MIN_PLAYER_SKILL,
+    MAX_CPU_DIFFICULTY_RATING,
+    MIN_PLAYER_SKILL,
 )
-from src.futsal_sim.models import Player, PlayerPosition, Team, TeamLineup, CPUTeam
+from src.futsal_sim.models import CPUTeam, Player, PlayerPosition, Team, TeamLineup
 from src.futsal_sim.services.business_models import TeamSheetPosition
 
 
@@ -93,7 +94,7 @@ class TeamOpponentFactory:
 
     def create_cpu_team(self) -> Tuple[Team, TeamLineup]:
         team, lineup = self._find_existing_cpu_by_skill()
-        if team:
+        if team and lineup:
             return team, lineup
         return self._generate_cpu_team()
 

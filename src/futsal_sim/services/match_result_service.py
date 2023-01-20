@@ -1,4 +1,4 @@
-from django.db.models import QuerySet, Q
+from django.db.models import Q, QuerySet
 
 from src.common.utils import find_or_fail
 from src.futsal_sim.models import MatchResult, Team

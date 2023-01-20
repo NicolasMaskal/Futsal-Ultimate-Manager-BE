@@ -13,7 +13,8 @@ from ..users.models import User
 from .constants import (
     BASE_PRICE_FOR_AVERAGE_PLAYER,
     MAX_SQUAD_VALID_SIZE,
-    PLAYER_AMOUNT_TEAM_SHEET, MIN_PLAYER_SKILL,
+    MIN_PLAYER_SKILL,
+    PLAYER_AMOUNT_TEAM_SHEET,
 )
 
 

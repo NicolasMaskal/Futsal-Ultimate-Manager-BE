@@ -10,7 +10,7 @@ class PlayerFilter(django_filters.FilterSet):
 
 
 class TeamFilter(django_filters.FilterSet):
-    owner = django_filters.NumberFilter(field_name='owner__id')
+    owner = django_filters.NumberFilter(field_name="owner__id")
 
     class Meta:
         model = Team
