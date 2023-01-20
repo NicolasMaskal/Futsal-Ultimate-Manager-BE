@@ -12,7 +12,7 @@ from src.futsal_sim.constants import (
     TEAM_SKILL_CALC_PLAYER_AMOUNT,
 )
 from src.futsal_sim.filters import TeamFilter
-from src.futsal_sim.models import Player, Team, TeamSheet
+from src.futsal_sim.models import Player, Team
 from src.futsal_sim.services.factories import PlayerFactory
 from src.users.models import User
 
@@ -74,26 +74,6 @@ def calc_team_skill(team: Team) -> int:
         .aggregate(Avg("skill"))["skill__avg"]
     )
     return round(team_skill) if team_skill else 0
-
-
-def validate_teamsheet_team(*, team: Team, team_sheet: TeamSheet):
-    # TODO Replicate logic in input serializer
-    if team != team_sheet.team:
-        raise ValidationError(f"Team sheet({team_sheet.id}) doesn't belong to team({team_sheet.team.id})!")
-    team_sheet_positions = [
-        team_sheet.right_attacker,
-        team_sheet.left_attacker,
-        team_sheet.right_defender,
-        team_sheet.left_defender,
-        team_sheet.goalkeeper,
-    ]
-    if None in team_sheet_positions:
-        raise ValidationError("Can't play a match with less than 5 players in team sheet!")
-
-
-def validate_squad_size(team: Team):
-    if not team.has_valid_squad_size:
-        raise ValidationError("Invalid squad size. More than 12 players present!")
 
 
 def team_sell_players(*, team: Team, player_ids: list[int]) -> Team:

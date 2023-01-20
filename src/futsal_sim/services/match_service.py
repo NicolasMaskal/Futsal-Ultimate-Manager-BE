@@ -63,6 +63,7 @@ class PlayerMatchMomentCreator:
         position = PositionFactory.generate_goal_scorer_position()
         player = getattr(self.lineup, position.value)
         player.goals_scored += 1
+        player.save()
 
         return player, position
 
@@ -73,6 +74,8 @@ class PlayerMatchMomentCreator:
         if position:
             player = getattr(self.lineup, position.value)
             player.assists_made += 1
+            player.save()
+
         return player
 
 

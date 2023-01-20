@@ -7,7 +7,7 @@ from rest_framework.viewsets import ViewSet
 
 from src.api.mixins import ApiAuthMixin
 from src.futsal_sim.models import Player
-from src.futsal_sim.serializers import TeamOutputSerializer
+from src.futsal_sim.serializers import TeamOutputSerializer, TeamShortOutputSerializer
 from src.futsal_sim.services.team_service import TeamCRUDService, team_sell_players
 
 
@@ -31,7 +31,7 @@ class TeamCRUDApi(ApiAuthMixin, ViewSet):
 
         service = TeamCRUDService(user=request.user)
         queryset = service.team_list(filters=filters_serializer.validated_data)
-        serializer = TeamOutputSerializer(queryset, many=True)
+        serializer = TeamShortOutputSerializer(queryset, many=True)
 
         return Response(data=serializer.data)
 

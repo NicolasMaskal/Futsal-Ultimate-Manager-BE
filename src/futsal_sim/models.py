@@ -104,13 +104,7 @@ class TeamSheet(TeamPlayersInPositions):
 
     @property
     def is_ready_for_match(self) -> bool:
-        return bool(
-            self.right_attacker
-            and self.left_attacker
-            and self.right_defender
-            and self.left_defender
-            and self.goalkeeper
-        )
+        return None not in self.players
 
 
 class TeamLineup(TeamPlayersInPositions):
