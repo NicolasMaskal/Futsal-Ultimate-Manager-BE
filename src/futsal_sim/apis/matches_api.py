@@ -46,6 +46,6 @@ class MatchApi(ApiAuthMixin, ViewSet):
 
     def retrieve(self, request: Request, team_pk: str, pk: str):
         team = TeamCRUDService(user=request.user).team_retrieve(team_id=int(team_pk))
-        match = MatchResultReadService(team=team).match_retrieve(match_id=int(pk))
+        match = MatchResultReadService(team=team, user=request.user).match_retrieve(match_id=int(pk))
         serializer = MatchResultOutputSerializer(match)
         return Response(serializer.data)

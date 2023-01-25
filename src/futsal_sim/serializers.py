@@ -91,7 +91,7 @@ class MatchMomentOutputSerializer(serializers.ModelSerializer):
 
 
 class MatchResultOutputSerializer(serializers.ModelSerializer):
-    date = serializers.DateTimeField(format="%Y-%m-%d")
+    date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     player_team = TeamOutputSerializer()
     cpu_team = TeamOutputSerializer()
     player_lineup = TeamLineupOutputSerializer()
@@ -115,7 +115,7 @@ class MatchResultOutputSerializer(serializers.ModelSerializer):
 
 
 class MatchResultShortOutputSerializer(serializers.ModelSerializer):
-    date = serializers.DateTimeField(format="%Y-%m-%d")
+    date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
     player_team = TeamShortOutputSerializer()
     cpu_team = TeamShortOutputSerializer()
 
