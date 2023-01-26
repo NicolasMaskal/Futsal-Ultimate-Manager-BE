@@ -32,14 +32,14 @@ MULTIPLIER_COIN_LOSS = 0.125
 # ---------------------------------------------------
 # Percentage chances for positions doing an action during a match
 
-# Chances of scoring a goal for each position. Percentages must add up 100!
+# Chances of scoring a goal for each position. Percentages must add up to 100!
 ATTACKER_GOAL_PERC = 72
 DEFENDER_GOAL_PERC = 26
 GK_GOAL_PERC = 2
 
 # Chance of an assist happening
 ASSIST_PERC = 60
-# Chances of assisting a goal for each position. Percentages must add up 100!
+# Chances of assisting a goal for each position. Percentages must add up to 100!
 ATTACKER_ASSIST_PERC = 56
 DEFENDER_ASSIST_PERC = 40
 GK_ASSIST_PERC = 4
@@ -62,16 +62,16 @@ MULTIPLIER_INFIELD_AS_GK = 0.25
 # -----------------------------------------------
 # Packs
 PLAYER_AMOUNT_IN_PACK = 3
-BRONZE_PRICE = 100
-SILVER_PRICE = 200
-GOLD_PRICE = 400
+BRONZE_PRICE = 250
+SILVER_PRICE = 500
+GOLD_PRICE = 750
 
 # Coin generation upper, lower bounds (is added to avg_skill of team)
 GOLD_LOWER_BOUND = 0
 GOLD_UPPER_BOUND = 8
 
-SILVER_LOWER_BOUND = -3
-SILVER_UPPER_BOUND = 3
+SILVER_LOWER_BOUND = -4
+SILVER_UPPER_BOUND = 4
 
 BRONZE_LOWER_BOUND = -10
 BRONZE_UPPER_BOUND = 0
