@@ -10,12 +10,7 @@ from django.db import models
 
 from ..common.models import BaseModel
 from ..users.models import User
-from .constants import (
-    BASE_PRICE_FOR_AVERAGE_PLAYER,
-    MAX_SQUAD_VALID_SIZE,
-    MIN_PLAYER_SKILL,
-    PLAYER_AMOUNT_TEAM_SHEET,
-)
+from .constants import BASE_PRICE_FOR_AVERAGE_PLAYER, MIN_PLAYER_SKILL
 
 
 class PlayerPosition(models.TextChoices):
@@ -34,10 +29,6 @@ class Team(BaseModel):
     draws = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     loses = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     coins = models.IntegerField(default=0, validators=[MinValueValidator(0)])
-
-    @property
-    def has_valid_squad_size(self) -> bool:
-        return PLAYER_AMOUNT_TEAM_SHEET <= self.players.count() <= MAX_SQUAD_VALID_SIZE
 
     @property
     def matches_played(self) -> int:

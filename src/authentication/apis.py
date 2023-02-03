@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_jwt.views import ObtainJSONWebTokenView
 
-from src.api.mixins import ApiAuthMixin, CsrfExemptedSessionAuthentication
-from src.authentication.services import auth_logout, activate_email
+from src.api.mixins import ApiAuthMixin
+from src.authentication.services import activate_email, auth_logout
 from src.futsal_sim.services.team_service import TeamCRUDService
 from src.users.serializers import UserOutputSerializer
 from src.users.services import user_create
@@ -63,8 +63,10 @@ class UserRegisterApi(APIView):
     def post(self, request: Request, *args, **kwargs):
         serializer = self.InputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = user_create(email=serializer.data["email"], password=serializer.data["password"], is_admin=False, email_verified=False)
-        activate_email(domain=get_current_site(request).domain, use_https=request.is_secure(), user=user)
+        user = user_create(
+            email=serializer.data["email"], password=serializer.data["password"], is_admin=False, email_verified=False
+        )
+        activate_email(domain=str(get_current_site(request).domain), use_https=request.is_secure(), user=user)
         TeamCRUDService(user=user).team_create(name=serializer.data["team_name"])
         login(request, user)
         output_serializer = UserOutputSerializer(user)

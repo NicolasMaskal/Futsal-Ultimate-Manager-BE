@@ -1,10 +1,10 @@
-from django.urls import path, include
+from django.urls import include, path
 
 from .apis import (
     UserJwtLoginApi,
     UserJwtLogoutApi,
-    UserRegisterApi,
     UserMeApi,
+    UserRegisterApi,
     UserSessionLoginApi,
     UserSessionLogoutApi,
 )

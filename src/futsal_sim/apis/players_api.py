@@ -4,9 +4,14 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
 from src.api.mixins import ApiAuthMixin
+from src.futsal_sim.constants import TEAM_SKILL_CALC_PLAYER_AMOUNT
 from src.futsal_sim.serializers import PlayerOutputSerializer
 from src.futsal_sim.services.player_service import PlayerReadService
-from src.futsal_sim.services.team_service import TeamCRUDService
+from src.futsal_sim.services.team_service import (
+    TeamCRUDService,
+    calc_average_skill,
+    calc_team_skill,
+)
 
 # View is nested in teams resource
 
@@ -24,5 +29,13 @@ class PlayerListApi(ApiAuthMixin, ViewSet):
         service = PlayerReadService(user=request.user, team=team)
         queryset = service.player_list(filters=filters_serializer.validated_data)
         serializer = PlayerOutputSerializer(queryset, many=True)
-
-        return Response(data=serializer.data)
+        average_skill = calc_average_skill(team)
+        team_skill = calc_team_skill(team)
+        return Response(
+            {
+                "team_skill": team_skill,
+                "average_skill": average_skill,
+                "player_amount_considered": TEAM_SKILL_CALC_PLAYER_AMOUNT,
+                "players": serializer.data,
+            }
+        )

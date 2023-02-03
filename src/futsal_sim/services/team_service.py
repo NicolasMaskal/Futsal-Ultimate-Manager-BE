@@ -91,6 +91,11 @@ def calc_team_skill(team: Team) -> int:
     return round(team_skill) if team_skill else 0
 
 
+def calc_average_skill(team: Team) -> int:
+    average_player_skill = Player.objects.filter(team=team.id).aggregate(Avg("skill"))["skill__avg"]
+    return round(average_player_skill) if average_player_skill else 0
+
+
 def team_sell_players(*, team: Team, player_ids: list[int], user: User) -> Team:
     validate_owner_of_team_perms(team=team, user=user)
     new_squad_size = team.players.count() - len(player_ids)

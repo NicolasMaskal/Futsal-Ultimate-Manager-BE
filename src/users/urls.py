@@ -1,7 +1,6 @@
 from django.urls import path
 
-from . import apis
-from .apis import UserListApi, ActivateEmailAPI
+from .apis import ActivateEmailAPI, UserListApi
 
 urlpatterns = [
     path("", UserListApi.as_view(), name="list"),
