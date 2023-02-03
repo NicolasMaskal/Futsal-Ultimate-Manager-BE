@@ -100,7 +100,7 @@ def team_sell_players(*, team: Team, player_ids: list[int], user: User) -> Team:
     validate_owner_of_team_perms(team=team, user=user)
     new_squad_size = team.players.count() - len(player_ids)
     if new_squad_size < PLAYER_AMOUNT_TEAM_SHEET:
-        raise ValidationError(f"You can't have less than {PLAYER_AMOUNT_TEAM_SHEET} players left!")
+        raise ValidationError(f"Error selling player(s), you can't have less than {PLAYER_AMOUNT_TEAM_SHEET} players left!")
 
     player_qs: QuerySet[Player] = Player.objects.filter(pk__in=player_ids)
 
@@ -108,7 +108,7 @@ def team_sell_players(*, team: Team, player_ids: list[int], user: User) -> Team:
     team_avg = calc_team_skill(team)
     total_sell_price = sum([player.calc_sell_price(team_avg) for player in players])
 
-    player_qs.update(owner=None)
+    player_qs.update(team=None)
 
     new_coin_amount = team.coins + total_sell_price
     team, _ = model_update(instance=team, fields=["coins"], data={"coins": new_coin_amount})
