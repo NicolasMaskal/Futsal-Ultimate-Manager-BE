@@ -13,11 +13,11 @@ from src.common.models import BaseModel
 
 
 class BaseUserManager(BUM):
-    def create_user(self, email, is_active=True, is_admin=False, password=None):
+    def create_user(self, email, is_active=True, email_verified=False, is_admin=False, password=None):
         if not email:
             raise ValueError("Users must have an email address")
 
-        user = self.model(email=self.normalize_email(email.lower()), is_active=is_active, is_admin=is_admin)
+        user = self.model(email=self.normalize_email(email.lower()), email_verified=email_verified, is_active=is_active, is_admin=is_admin)
 
         if password is not None:
             user.set_password(password)
@@ -52,6 +52,7 @@ class User(BaseModel, AbstractBaseUser, PermissionsMixin):
 
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    email_verified = models.BooleanField(default=True)
 
     # This should potentially be an encrypted field
     jwt_key = models.UUIDField(default=uuid.uuid4)

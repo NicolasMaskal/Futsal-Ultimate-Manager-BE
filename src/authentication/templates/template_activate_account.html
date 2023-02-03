@@ -1,0 +1,10 @@
+{% autoescape off %}
+    Greetings {{ user.username }},
+
+
+    We're excited to have you as a player on Futsal Ultimate Manager!
+
+    To complete your registration, kindly click the link below. Thank you.
+
+    http://{{ domain }}{% url 'api:users:activate' uidb64=uid token=token %}
+{% endautoescape %}

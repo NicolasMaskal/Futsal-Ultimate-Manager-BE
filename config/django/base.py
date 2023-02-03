@@ -20,13 +20,15 @@ env.read_env(os.path.join(BASE_DIR, ".env"))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "=ug_ucl@yi6^mrcjyz%(u0%&g2adt#bz3@yos%#@*t#t!ypx=a"
+SECRET_KEY = env("SECRET_KEY", default="=ug_ucl@yi6^mrcjyz%(u0%&g2adt#bz3@yos%#@*t#t!ypx=a")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env.bool("DJANGO_DEBUG", default=True)
 
 ALLOWED_HOSTS = ["*"]
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -59,6 +61,7 @@ INSTALLED_APPS = [
     # http://whitenoise.evans.io/en/stable/django.html#using-whitenoise-in-development
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
+    "src.authentication",
     *THIRD_PARTY_APPS,
     *LOCAL_APPS,
 ]
@@ -92,6 +95,8 @@ TEMPLATES = [
         },
     },
 ]
+
+PASSWORD_RESET_TIMEOUT = 14400
 
 WSGI_APPLICATION = "config.wsgi.application"
 

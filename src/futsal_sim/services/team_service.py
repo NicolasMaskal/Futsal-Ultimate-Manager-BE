@@ -47,7 +47,7 @@ class TeamCRUDService:
         generator.create_players(PLAYER_AMOUNT_CREATED_TEAM)
 
         if not self.user.active_team:
-            self.user.active_team = team
+            # self.user.active_team = team
             model_update(instance=self.user, fields=["active_team"], data={"active_team": team})
 
         return team
