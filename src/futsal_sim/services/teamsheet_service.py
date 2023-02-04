@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.db.models import QuerySet
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
@@ -29,11 +31,11 @@ class TeamSheetCRUDService:
         self,
         *,
         name: str,
-        right_attacker: int,
-        left_attacker: int,
-        right_defender: int,
-        left_defender: int,
-        goalkeeper: int
+        right_attacker: Optional[int] = None,
+        left_attacker: Optional[int] = None,
+        right_defender: Optional[int] = None,
+        left_defender: Optional[int] = None,
+        goalkeeper: Optional[int] = None
     ) -> TeamSheet:
         team_sheet = TeamSheet(
             name=name,
@@ -60,6 +62,7 @@ class TeamSheetCRUDService:
         left_defender: int,
         goalkeeper: int
     ) -> TeamSheet:
+
         teamsheet = self.teamsheet_retrieve(teamsheet_id=teamsheet_id)
         teamsheet, _ = model_update(
             instance=teamsheet,

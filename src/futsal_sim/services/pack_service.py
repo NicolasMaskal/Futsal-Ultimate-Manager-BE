@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Tuple
 
-from rest_framework.exceptions import ValidationError
+from django.core.exceptions import ValidationError
 
 from src.futsal_sim.constants import (
     BRONZE_LOWER_BOUND,

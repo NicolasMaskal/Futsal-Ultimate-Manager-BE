@@ -1,5 +1,6 @@
 from typing import Optional
 
+from django.core.exceptions import ValidationError
 from django.core.validators import (
     MaxLengthValidator,
     MaxValueValidator,
@@ -101,6 +102,13 @@ class TeamSheet(TeamPlayersInPositions):
     @property
     def is_ready_for_match(self) -> bool:
         return None not in self.players
+
+    def clean(self):
+        if (
+            len({self.right_attacker, self.left_attacker, self.right_defender, self.left_defender, self.goalkeeper})
+            != 5
+        ):
+            raise ValidationError("Duplicate player detected!")
 
 
 class TeamLineup(TeamPlayersInPositions):

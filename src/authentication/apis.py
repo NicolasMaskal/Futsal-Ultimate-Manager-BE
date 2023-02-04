@@ -12,6 +12,7 @@ from rest_framework_jwt.views import ObtainJSONWebTokenView
 from src.api.mixins import ApiAuthMixin
 from src.authentication.services import activate_email, auth_logout
 from src.futsal_sim.services.team_service import TeamCRUDService
+from src.futsal_sim.services.teamsheet_service import TeamSheetCRUDService
 from src.users.serializers import UserOutputSerializer
 from src.users.services import user_create
 
@@ -67,7 +68,8 @@ class UserRegisterApi(APIView):
             email=serializer.data["email"], password=serializer.data["password"], is_admin=False, email_verified=False
         )
         activate_email(domain=str(get_current_site(request).domain), use_https=request.is_secure(), user=user)
-        TeamCRUDService(user=user).team_create(name=serializer.data["team_name"])
+        team = TeamCRUDService(user=user).team_create(name=serializer.data["team_name"])
+        TeamSheetCRUDService(team=team).teamsheet_create(name="Teamsheet")
         login(request, user)
         output_serializer = UserOutputSerializer(user)
 

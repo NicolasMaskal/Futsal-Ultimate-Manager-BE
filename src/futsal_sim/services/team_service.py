@@ -100,7 +100,9 @@ def team_sell_players(*, team: Team, player_ids: list[int], user: User) -> Team:
     validate_owner_of_team_perms(team=team, user=user)
     new_squad_size = team.players.count() - len(player_ids)
     if new_squad_size < PLAYER_AMOUNT_TEAM_SHEET:
-        raise ValidationError(f"Error selling player(s), you can't have less than {PLAYER_AMOUNT_TEAM_SHEET} players left!")
+        raise ValidationError(
+            f"Error selling player(s), you can't have less than {PLAYER_AMOUNT_TEAM_SHEET} players left!"
+        )
 
     player_qs: QuerySet[Player] = Player.objects.filter(pk__in=player_ids)
 
