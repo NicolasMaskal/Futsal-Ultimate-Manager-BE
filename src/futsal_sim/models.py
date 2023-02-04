@@ -105,9 +105,9 @@ class TeamPlayersInPositions(BaseModel):
         ]
 
     def clean(self):
-        not_none_players = filter(lambda p: (p is not None), self.players)
+        not_none_players = list(filter(lambda p: (p is not None), self.players))
         set_of_players = set(not_none_players)
-        if len(set_of_players) != len(list(not_none_players)):
+        if len(set_of_players) != len(not_none_players):
             raise ValidationError("Duplicate player detected!")
 
     class Meta:

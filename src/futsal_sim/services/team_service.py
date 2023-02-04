@@ -12,7 +12,7 @@ from src.futsal_sim.constants import (
     TEAM_SKILL_CALC_PLAYER_AMOUNT,
 )
 from src.futsal_sim.filters import TeamFilter
-from src.futsal_sim.models import Player, Team
+from src.futsal_sim.models import Player, Team, TeamSheet
 from src.futsal_sim.services.factories import PlayerFactory
 from src.users.models import User
 
@@ -111,8 +111,34 @@ def team_sell_players(*, team: Team, player_ids: list[int], user: User) -> Team:
     total_sell_price = sum([player.calc_sell_price(team_avg) for player in players])
 
     player_qs.update(team=None)
+    update_sheets_after_sell(player_qs)
 
     new_coin_amount = team.coins + total_sell_price
     team, _ = model_update(instance=team, fields=["coins"], data={"coins": new_coin_amount})
 
     return team
+
+
+def update_sheets_after_sell(player_qs: QuerySet[Player]):
+    # Get all team sheets related to the sold players
+    team_sheets_qs = TeamSheet.objects.filter(
+        Q(right_attacker__in=player_qs)
+        | Q(left_attacker__in=player_qs)
+        | Q(right_defender__in=player_qs)
+        | Q(left_defender__in=player_qs)
+        | Q(goalkeeper__in=player_qs)
+    )
+
+    # Loop through each sheet and set the related position to null
+    for team_sheet in team_sheets_qs:
+        if team_sheet.right_attacker in player_qs:
+            team_sheet.right_attacker = None
+        elif team_sheet.left_attacker in player_qs:
+            team_sheet.left_attacker = None
+        elif team_sheet.right_defender in player_qs:
+            team_sheet.right_defender = None
+        elif team_sheet.left_defender in player_qs:
+            team_sheet.left_defender = None
+        elif team_sheet.goalkeeper in player_qs:
+            team_sheet.goalkeeper = None
+        team_sheet.save()
