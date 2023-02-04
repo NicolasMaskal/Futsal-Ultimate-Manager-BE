@@ -47,6 +47,7 @@ class PlayerOutputSerializer(serializers.ModelSerializer):
             "name",
             "preferred_position",
             "skill",
+            "stamina_left",
             "matches_played",
             "goals_scored",
             "assists_made",
