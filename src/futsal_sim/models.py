@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 from django.core.exceptions import ValidationError
 from django.core.validators import (
@@ -45,6 +45,7 @@ class Player(BaseModel):
     preferred_position = models.CharField(choices=PlayerPosition.choices, max_length=32)
     team = models.ForeignKey(Team, on_delete=models.CASCADE, null=True, related_name="players")
     skill = models.IntegerField(validators=[MinValueValidator(MIN_PLAYER_SKILL)])
+    stamina_left = models.IntegerField(default=100, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
     matches_played = models.IntegerField(default=0, validators=[MinValueValidator(0)])
     goals_scored = models.IntegerField(default=0, validators=[MinValueValidator(0)])
@@ -57,8 +58,9 @@ class Player(BaseModel):
         return self.preferred_position == TeamSheet.goalkeeper
 
     def calc_sell_price(self, team_avg: float) -> int:
-        sell_price = BASE_PRICE_FOR_AVERAGE_PLAYER - team_avg + self.skill
-        return max(round(sell_price), 5)
+        sell_price = BASE_PRICE_FOR_AVERAGE_PLAYER + (self.skill - team_avg) * 2
+        sell_price *= self.stamina_left / 100
+        return max(round(sell_price), 10)
 
     class Meta:
         constraints = [
@@ -91,6 +93,16 @@ class TeamPlayersInPositions(BaseModel):
     @property
     def players(self) -> list[Optional[Player]]:
         return [self.right_attacker, self.left_attacker, self.right_defender, self.left_defender, self.goalkeeper]
+
+    @property
+    def players_with_positions(self) -> list[Tuple[Optional[Player], PlayerPosition]]:
+        return [
+            (self.right_attacker, PlayerPosition.ATTACKER),
+            (self.left_attacker, PlayerPosition.ATTACKER),
+            (self.right_defender, PlayerPosition.DEFENDER),
+            (self.left_defender, PlayerPosition.DEFENDER),
+            (self.goalkeeper, PlayerPosition.GOALKEEPER),
+        ]
 
     class Meta:
         abstract = True

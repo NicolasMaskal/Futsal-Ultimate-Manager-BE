@@ -15,6 +15,7 @@ from src.futsal_sim.models import (
     MatchGoal,
     MatchResult,
     Player,
+    PlayerPosition,
     Team,
     TeamLineup,
     TeamSheet,
@@ -160,9 +161,24 @@ class MatchInProgress:
         self.player_team.save()
         return added_coins
 
+    def regen_stamina(self):
+        for player in self.player_team.players:
+            if player not in self.player_lineup.players:
+                stamina_boost = random.randint(30, 40)
+                player.stamina_left = min(player.stamina_left + stamina_boost, 100)
+
     def _update_players(self):
-        for player in self.player_lineup.players:
+        self.regen_stamina()
+        for (player, position) in self.player_lineup.players_with_positions:
             player.matches_played += 1
+            stamina_drained = random.randint(10, 20)
+            if position == PlayerPosition.GOALKEEPER:
+                # Goalkeepers aren't as tired as other positions
+                stamina_drained = round(0.5 * stamina_drained)
+
+            new_stamina = player.stamina_left - stamina_drained
+            new_stamina = min(100, new_stamina)
+            player.stamina_left = max(1, new_stamina)
             player.save()
 
 

@@ -12,8 +12,8 @@ TEAM_SKILL_CALC_PLAYER_AMOUNT = 8
 
 MIN_PLAYER_SKILL = 1
 
-# Formula for calculation: BASE_PRICE - team_avg + self.skill
-BASE_PRICE_FOR_AVERAGE_PLAYER = 20
+# Formula for calculation: (BASE_PRICE - (team_avg + player.skill)*2) * stamina left
+BASE_PRICE_FOR_AVERAGE_PLAYER = 50
 
 MIN_PLAYER_SELL_PRICE = 5
 
@@ -81,7 +81,7 @@ ATT_GENERATION_PERC_CHANCE = 40
 
 # ---------------------------------------------
 # Team Creation
-BASE_COIN_AMOUNT = 100
+BASE_COIN_AMOUNT = 1000
 
 # Created team will have players with skill in this interval
 PLAYER_AMOUNT_CREATED_TEAM = 7

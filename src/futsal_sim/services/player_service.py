@@ -61,6 +61,9 @@ class PlayerSkillCalculator:
             multiplier = MULTIPLIER_DIFFERENT_INFIELD_POS
         self._apply_multiplier(multiplier)
 
+    def _apply_stamina(self):
+        self._apply_multiplier(self.player.stamina_left / 100)
+
     def calc_skill_in_pos(self) -> int:
         self._res_skill = self.player.skill
 
@@ -72,4 +75,5 @@ class PlayerSkillCalculator:
         if self._res_skill is None:
             raise ValueError("Result skill is none!")
 
+        self._apply_stamina()
         return max(1, self._res_skill)

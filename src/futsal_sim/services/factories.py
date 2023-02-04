@@ -83,7 +83,11 @@ class TeamOpponentFactory:
 
     @staticmethod
     def _generate_random_team_name() -> str:
-        return "FC " + faker.Faker().city()
+        abbr = random.choice(["SC", "FC", "FK", "SK"])
+        seed = random.randint(0, 1)
+        if seed == 0:
+            return abbr + " " + faker.Faker().city()
+        return faker.Faker().city() + " " + abbr
 
     def _generate_match_stats_for_team(self, team: Team):
         matches_played = random.randint(CPU_MATCHES_PLAYED_LOWER_BOUND, CPU_MATCHES_PLAYED_UPPER_BOUND)
