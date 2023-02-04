@@ -74,6 +74,7 @@ class TeamLineupOutputSerializer(serializers.ModelSerializer):
         model = TeamLineup
         fields = ("right_attacker", "left_attacker", "right_defender", "left_defender", "goalkeeper")
 
+
 class MatchMomentOutputSerializer(serializers.ModelSerializer):
     goal_scorer = PlayerOutputSerializer()
     assister = PlayerOutputSerializer()
