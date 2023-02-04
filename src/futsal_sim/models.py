@@ -104,6 +104,12 @@ class TeamPlayersInPositions(BaseModel):
             (self.goalkeeper, PlayerPosition.GOALKEEPER),
         ]
 
+    def clean(self):
+        not_none_players = filter(lambda p: (p is not None), self.players)
+        set_of_players = set(not_none_players)
+        if len(set_of_players) != len(list(not_none_players)):
+            raise ValidationError("Duplicate player detected!")
+
     class Meta:
         abstract = True
 
@@ -114,13 +120,6 @@ class TeamSheet(TeamPlayersInPositions):
     @property
     def is_ready_for_match(self) -> bool:
         return None not in self.players
-
-    def clean(self):
-        if (
-            len({self.right_attacker, self.left_attacker, self.right_defender, self.left_defender, self.goalkeeper})
-            != 5
-        ):
-            raise ValidationError("Duplicate player detected!")
 
 
 class TeamLineup(TeamPlayersInPositions):
