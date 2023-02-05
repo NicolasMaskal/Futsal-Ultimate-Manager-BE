@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from src.api.mixins import ApiAuthMixin
 from src.futsal_sim.serializers import PlayerOutputSerializer
 from src.futsal_sim.services import pack_service
-from src.futsal_sim.services.team_service import TeamCRUDService
+from src.futsal_sim.services.team_service import TeamCRUDService, calc_average_skill
 
 
 # View is nested in team/<pk> resource
@@ -21,4 +21,5 @@ class TeamBuyPackApi(ApiAuthMixin, APIView):
 
         players = pack_service.buy_pack(team=team, pack_type=serializer.data["pack_type"])
         output_serializer = PlayerOutputSerializer(players, many=True)
-        return Response(output_serializer.data)
+        average_skill = calc_average_skill(team)
+        return Response({"average_skill": average_skill, "players": output_serializer.data})

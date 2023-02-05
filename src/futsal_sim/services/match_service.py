@@ -4,16 +4,16 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 
 from src.futsal_sim.constants import (
+    BASE_COINS_MATCH_WIN,
+    GOAL_AMOUNT_MU,
+    GOAL_AMOUNT_SIGMA,
+    GOAL_DIFF_MULTIPLIER,
     MATCH_MAX_MINUTE,
     MAX_GOAL_AMOUNT,
     MIN_GOAL_AMOUNT,
     MULTIPLIER_COIN_DRAW,
     MULTIPLIER_COIN_LOSS,
-    BASE_COINS_MATCH_WIN,
     MULTIPLIER_SKILL_DIFFERENCE,
-    GOAL_DIFF_MULTIPLIER,
-    GOAL_AMOUNT_MU,
-    GOAL_AMOUNT_SIGMA,
 )
 from src.futsal_sim.models import (
     MatchGoal,
