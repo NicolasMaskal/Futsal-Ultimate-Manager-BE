@@ -46,7 +46,9 @@ class PlayerMatchMomentCreator:
         assister = self._generate_assister(lineup, scorer_pos)
 
         minute = self._generate_random_minute()
-        MatchGoal(minute=minute, team=lineup.team, goal_scorer=scorer, assister=assister, match=self.match_result).save()
+        MatchGoal(
+            minute=minute, team=lineup.team, goal_scorer=scorer, assister=assister, match=self.match_result
+        ).save()
 
     def _generate_random_minute(self) -> int:
         random_minute = random.randint(1, MATCH_MAX_MINUTE)
@@ -166,6 +168,7 @@ class MatchInProgress:
             if player not in self.player_lineup.players:
                 stamina_boost = random.randint(30, 40)
                 player.stamina_left = min(player.stamina_left + stamina_boost, 100)
+                player.save()
 
     def _update_players(self):
         self.regen_stamina()

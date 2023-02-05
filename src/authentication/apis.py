@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.validators import ASCIIUsernameValidator
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator
 from rest_framework import serializers, status
 from rest_framework.request import Request
@@ -15,7 +16,7 @@ from src.authentication.services import activate_email, auth_logout
 from src.futsal_sim.services.team_service import TeamCRUDService
 from src.futsal_sim.services.teamsheet_service import TeamSheetCRUDService
 from src.users.serializers import UserOutputSerializer
-from src.users.services import user_create, user_change_password
+from src.users.services import user_change_password, user_create
 
 
 class UserSessionLoginApi(APIView):
@@ -25,7 +26,7 @@ class UserSessionLoginApi(APIView):
 
     class InputSerializer(serializers.Serializer):
         email = serializers.EmailField()
-        password = PasswordField()
+        password = serializers.CharField()
 
     def post(self, request: Request):
         serializer = self.InputSerializer(data=request.data)
@@ -34,14 +35,14 @@ class UserSessionLoginApi(APIView):
         user = authenticate(request, **serializer.validated_data)
 
         if user is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError("Invalid credentials")
 
         login(request, user)
 
         output_serializer = UserOutputSerializer(user)
         session_key = request.session.session_key
 
-        return Response({"session": session_key, "user": output_serializer.data})
+        return Response({"session": session_key, "user": output_serializer.data}, status=status.HTTP_201_CREATED)
 
 
 class UserSessionLogoutApi(APIView):
@@ -55,12 +56,7 @@ class UserRegisterApi(APIView):
     class InputSerializer(serializers.Serializer):
         team_name = serializers.CharField()
         email = serializers.EmailField()
-        password = serializers.CharField(
-            validators=[
-                ASCIIUsernameValidator(),
-                MinLengthValidator(6),
-            ]
-        )
+        password = PasswordField()
 
     def post(self, request: Request, *args, **kwargs):
         serializer = self.InputSerializer(data=request.data)
