@@ -37,6 +37,8 @@ class PlayerOutputSerializer(serializers.ModelSerializer):
     team = TeamShortOutputSerializer()
 
     def get_sell_price(self, obj: Player) -> int:
+        if not obj.team:
+            return 0
         team_skill = calc_team_skill(obj.team)
         return obj.calc_sell_price(team_skill)
 
@@ -83,10 +85,11 @@ class TeamLineupOutputSerializer(serializers.ModelSerializer):
 class MatchMomentOutputSerializer(serializers.ModelSerializer):
     goal_scorer = PlayerOutputSerializer()
     assister = PlayerOutputSerializer()
+    team = TeamShortOutputSerializer()
 
     class Meta:
         model = MatchGoal
-        fields = ("minute", "goal_scorer", "assister")
+        fields = ("minute", "goal_scorer", "assister", "team")
 
 
 class MatchResultOutputSerializer(serializers.ModelSerializer):

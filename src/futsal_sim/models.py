@@ -139,6 +139,7 @@ class MatchResult(BaseModel):
 
 class MatchGoal(BaseModel):
     minute = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(40)])
+    team = models.ForeignKey(Team, related_name="goal_moments", on_delete=models.CASCADE)
     goal_scorer = models.ForeignKey(Player, related_name="goal_moments", on_delete=models.CASCADE)
     assister = models.ForeignKey(Player, related_name="assist_moments", on_delete=models.CASCADE, null=True)
     match = models.ForeignKey(MatchResult, related_name="goal_moments", on_delete=models.CASCADE)
