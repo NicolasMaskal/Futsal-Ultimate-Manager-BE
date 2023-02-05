@@ -21,6 +21,11 @@ def user_create(
     return user
 
 
+def user_change_password(*, user: User, password: str):
+    user.set_password(password)
+    user.save()
+
+
 @transaction.atomic
 def user_update(*, user: User, data) -> User:
     non_side_effect_fields = ["first_name", "last_name"]

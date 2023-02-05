@@ -10,11 +10,12 @@ from rest_framework.views import APIView
 from rest_framework_jwt.views import ObtainJSONWebTokenView
 
 from src.api.mixins import ApiAuthMixin
+from src.authentication.serializers import PasswordField
 from src.authentication.services import activate_email, auth_logout
 from src.futsal_sim.services.team_service import TeamCRUDService
 from src.futsal_sim.services.teamsheet_service import TeamSheetCRUDService
 from src.users.serializers import UserOutputSerializer
-from src.users.services import user_create
+from src.users.services import user_create, user_change_password
 
 
 class UserSessionLoginApi(APIView):
@@ -24,7 +25,7 @@ class UserSessionLoginApi(APIView):
 
     class InputSerializer(serializers.Serializer):
         email = serializers.EmailField()
-        password = serializers.CharField()
+        password = PasswordField()
 
     def post(self, request: Request):
         serializer = self.InputSerializer(data=request.data)
@@ -77,6 +78,17 @@ class UserRegisterApi(APIView):
             {"message": "Account awaiting email verification!", "user": output_serializer.data},
             status=status.HTTP_201_CREATED,
         )
+
+
+class UserChangePassword(ApiAuthMixin, APIView):
+    class InputSerializer(serializers.Serializer):
+        password = PasswordField()
+
+    def post(self, request):
+        serializer = self.InputSerializer(data=request.data)
+        serializer.is_valid()
+        user_change_password(user=request.user, password=serializer.data["password"])
+        return Response({"message": "Password successfully changed!"})
 
 
 class UserJwtLoginApi(ObtainJSONWebTokenView):
