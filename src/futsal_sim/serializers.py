@@ -8,22 +8,18 @@ from src.futsal_sim.models import (
     TeamLineup,
     TeamSheet,
 )
-from src.futsal_sim.services.team_service import calc_average_skill, calc_team_skill
+from src.futsal_sim.services.team_service import calc_team_skill
 
 
 class TeamOutputSerializer(serializers.ModelSerializer):
     player_amount = serializers.SerializerMethodField()
-    average_skill = serializers.SerializerMethodField()
 
     def get_player_amount(self, obj: Team) -> int:
         return obj.players.count()
 
-    def get_average_skill(self, obj: Team) -> int:
-        return calc_average_skill(team=obj)
-
     class Meta:
         model = Team
-        fields = ("id", "name", "wins", "draws", "loses", "coins", "player_amount", "average_skill")
+        fields = ("id", "name", "wins", "draws", "loses", "coins", "player_amount")
 
 
 class TeamShortOutputSerializer(serializers.ModelSerializer):

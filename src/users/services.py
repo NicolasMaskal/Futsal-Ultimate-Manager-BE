@@ -21,9 +21,10 @@ def user_create(
     return user
 
 
-def user_change_password(*, user: User, password: str):
-    user.set_password(password)
+def user_change_password(*, user: User, new_password: str) -> User:
+    user.set_password(new_password)
     user.save()
+    return user
 
 
 @transaction.atomic

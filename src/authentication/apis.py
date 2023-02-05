@@ -76,12 +76,16 @@ class UserRegisterApi(APIView):
 
 class UserChangePassword(ApiAuthMixin, APIView):
     class InputSerializer(serializers.Serializer):
-        password = PasswordField()
+        current_password = serializers.CharField()
+        new_password = PasswordField()
 
     def post(self, request):
         serializer = self.InputSerializer(data=request.data)
-        serializer.is_valid()
-        user_change_password(user=request.user, password=serializer.data["password"])
+        serializer.is_valid(raise_exception=True)
+        if not authenticate(email=request.user.email, password=serializer.data["current_password"]):
+            raise ValidationError("Invalid current password provided!")
+        user = user_change_password(user=request.user, new_password=serializer.data["new_password"])
+        login(request, user)
         return Response({"message": "Password successfully changed!"})
 
 
