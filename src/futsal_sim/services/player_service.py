@@ -62,7 +62,8 @@ class PlayerSkillCalculator:
         self._apply_multiplier(multiplier)
 
     def _apply_stamina(self):
-        self._apply_multiplier(self.player.stamina_left / 100)
+        multiplier = 1 - (((100 - self.player.stamina_left) / 2) / 100)
+        self._apply_multiplier(multiplier)
 
     def calc_skill_in_pos(self) -> int:
         self._res_skill = self.player.skill

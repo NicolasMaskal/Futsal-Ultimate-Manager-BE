@@ -4,12 +4,16 @@ from dataclasses import dataclass
 from typing import Optional, Tuple
 
 from src.futsal_sim.constants import (
-    GOAL_AMOUNT_GENERATION_ITERATIONS,
     MATCH_MAX_MINUTE,
     MAX_GOAL_AMOUNT,
     MIN_GOAL_AMOUNT,
     MULTIPLIER_COIN_DRAW,
     MULTIPLIER_COIN_LOSS,
+    BASE_COINS_MATCH_WIN,
+    MULTIPLIER_SKILL_DIFFERENCE,
+    GOAL_DIFF_MULTIPLIER,
+    GOAL_AMOUNT_MU,
+    GOAL_AMOUNT_SIGMA,
 )
 from src.futsal_sim.models import (
     MatchGoal,
@@ -125,8 +129,8 @@ class MatchInProgress:
 
     @staticmethod
     def _generate_goal_amount() -> int:
-        # using min so that lower scores are more common
-        return min(random.randint(MIN_GOAL_AMOUNT, MAX_GOAL_AMOUNT) for _ in range(GOAL_AMOUNT_GENERATION_ITERATIONS))
+        goal_gen = round(random.gauss(GOAL_AMOUNT_MU, GOAL_AMOUNT_SIGMA))
+        return sorted((MIN_GOAL_AMOUNT, goal_gen, MAX_GOAL_AMOUNT))[1]
 
     def _add_goal_to_score(self):
         player_goal_chance = 50 + self.player_skill - self.cpu_skill
@@ -142,12 +146,12 @@ class MatchInProgress:
         :return: coins gained
         """
         self._update_players()
-        added_coins_for_win = 50 + 5 * (self.cpu_skill - self.player_skill)
-        goal_diff = self.player_goals - self.cpu_goals
+        added_coins_for_win = BASE_COINS_MATCH_WIN + MULTIPLIER_SKILL_DIFFERENCE * (self.cpu_skill - self.player_skill)
+        goal_diff_effect = GOAL_DIFF_MULTIPLIER * (self.player_goals - self.cpu_goals)
         if self.player_goals > self.cpu_goals:
             self.player_team.wins += 1
             self.cpu_team.loses += 1
-            added_coins = added_coins_for_win + goal_diff
+            added_coins = added_coins_for_win + goal_diff_effect
         elif self.player_goals == self.cpu_goals:
             self.player_team.draws += 1
             self.cpu_team.draws += 1
@@ -156,7 +160,7 @@ class MatchInProgress:
             self.player_team.loses += 1
             self.cpu_team.wins += 1
             added_coins = round(added_coins_for_win * MULTIPLIER_COIN_LOSS)
-            added_coins += goal_diff
+            added_coins += goal_diff_effect
 
         added_coins = max(added_coins, 0)
         self.player_team.coins += added_coins

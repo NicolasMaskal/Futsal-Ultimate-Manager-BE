@@ -78,7 +78,7 @@ class TeamOpponentFactory:
         self.cpu_team_skill = self._calc_cpu_skill()
 
     def _calc_cpu_skill(self) -> int:
-        cpu_average = round(self.player_team_skill - 10 + (self.difficulty_rating * 2))
+        cpu_average = round(self.player_team_skill - 15 + (self.difficulty_rating * 2))
         return cpu_average
 
     @staticmethod
