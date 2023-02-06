@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 from src.users.models import User
 from src.users.serializers import UserOutputSerializer
 from src.users.tokens import account_activation_token
-
+from django.conf import settings
 
 def auth_user_get_jwt_secret_key(user: User) -> str:
     return str(user.jwt_key)
@@ -25,20 +25,21 @@ def auth_jwt_response_payload_handler(token, user=None, request=None, issued_at=
     return {"user": user_serializer.data, "token": token}
 
 
-def activate_email(*, domain: str, use_https: bool, user: User):
+def activate_email(*, user: User):
     mail_subject = "Activate your user account."
-
+    activation_url = f"{settings.FE_DOMAIN}{settings.FE_EMAIL_ACTIVATE_URL}"
     message = render_to_string(
         "template_activate_account.html",
         {
             "user": user.username,
-            "domain": domain,
+            "fe_activation_url": activation_url,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
             "token": account_activation_token.make_token(user),
-            "protocol": "https" if use_https else "http",
+            "protocol": "https" if settings.DEBUG else "http",
         },
     )
     email = EmailMessage(mail_subject, message, to=[user.email])
+    email.content_subtype = "html"
     if not email.send():
         raise ValueError("Error sending mail!")
 

@@ -1,10 +1,7 @@
-{% autoescape off %}
-    Greetings {{ user.username }},
-
-
-    We're excited to have you as a player on Futsal Ultimate Manager!
-
-    To complete your registration, kindly click the link below. Thank you.
-
-    http://{{ domain }}{% url 'api:users:activate' uidb64=uid token=token %}
-{% endautoescape %}
+<p>Hello {{ user.username }},</p>
+<p>Welcome to Futsal Ultimate Manager!</p>
+<p>We're excited to have you as a player on Futsal Ultimate Manager!</p>
+<p>To complete your registration, kindly click the link below. Thank you.</p>
+<a href="{{ fe_activation_url }}/{{ uid }}/{{ token }}">Activate Account</a>
+<p>If that didn't work, copy and paste the link below in your browser</p>
+<p>{{ fe_activation_url }}/{{ uid }}/{{ token }}</p>

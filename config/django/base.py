@@ -173,6 +173,8 @@ REST_FRAMEWORK = {
 }
 
 APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:8000")
+FE_DOMAIN=env("FE_DOMAIN")
+FE_EMAIL_ACTIVATE_URL=env("FE_EMAIL_ACTIVATE_URL")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

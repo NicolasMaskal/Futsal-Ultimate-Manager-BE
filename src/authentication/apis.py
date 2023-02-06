@@ -62,7 +62,7 @@ class UserRegisterApi(APIView):
         user = user_create(
             email=serializer.data["email"], password=serializer.data["password"], is_admin=False, email_verified=False
         )
-        activate_email(domain=str(get_current_site(request).domain), use_https=request.is_secure(), user=user)
+        activate_email(user=user)
         team = TeamCRUDService(user=user).team_create(name=serializer.data["team_name"])
         TeamSheetCRUDService(team=team).teamsheet_create(name="Teamsheet")
         login(request, user)

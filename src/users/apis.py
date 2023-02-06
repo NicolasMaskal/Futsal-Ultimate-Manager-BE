@@ -1,6 +1,7 @@
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -48,6 +49,6 @@ class ActivateEmailAPI(APIView):
             user.email_verified = True
             user.save()
 
-            return Response({"message": "Thank you for your email confirmation. Now you can login your account."})
+            return Response({"message": "Thank you for your email confirmation!"})
         else:
-            raise ValueError("Activation link is invalid!")
+            raise ValidationError("Activation link is invalid!")
