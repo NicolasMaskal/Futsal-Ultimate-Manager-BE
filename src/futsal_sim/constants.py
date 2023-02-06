@@ -10,6 +10,7 @@ MAX_GOAL_AMOUNT = 15
 # Goal generation (Gauss distribution)
 GOAL_AMOUNT_MU = 6
 GOAL_AMOUNT_SIGMA = 3
+GOAL_SKILL_DIFF_PERC_MULTIPLIER = 2
 
 
 # Used when calculating team skill

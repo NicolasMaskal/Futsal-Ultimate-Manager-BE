@@ -13,7 +13,7 @@ from src.futsal_sim.constants import (
     MIN_GOAL_AMOUNT,
     MULTIPLIER_COIN_DRAW,
     MULTIPLIER_COIN_LOSS,
-    MULTIPLIER_SKILL_DIFFERENCE,
+    MULTIPLIER_SKILL_DIFFERENCE, GOAL_SKILL_DIFF_PERC_MULTIPLIER,
 )
 from src.futsal_sim.models import (
     MatchGoal,
@@ -129,11 +129,11 @@ class MatchInProgress:
 
     @staticmethod
     def _generate_goal_amount() -> int:
-        goal_gen = round(random.gauss(GOAL_AMOUNT_MU, GOAL_AMOUNT_SIGMA))
+        goal_gen = round(random.gauss(GOAL_AMOUNT_MU, GOAL_AMOUNT_SIGMA) + 0.5)
         return sorted((MIN_GOAL_AMOUNT, goal_gen, MAX_GOAL_AMOUNT))[1]
 
     def _add_goal_to_score(self):
-        player_goal_chance = 50 + self.player_skill - self.cpu_skill
+        player_goal_chance = 50 + GOAL_SKILL_DIFF_PERC_MULTIPLIER * (self.player_skill - self.cpu_skill)
 
         seed = random.randint(1, 100)
         if seed < player_goal_chance:
