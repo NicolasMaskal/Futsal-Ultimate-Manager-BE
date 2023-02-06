@@ -26,7 +26,7 @@ def auth_jwt_response_payload_handler(token, user=None, request=None, issued_at=
 
 
 def activate_email(*, user: User, team_name: str):
-    mail_subject = "Verify email for Futsal Ultimate Manager!"
+    mail_subject = "Verify email for Futsal Ultimate Manager"
     activation_url = f"{settings.FE_DOMAIN}{settings.FE_EMAIL_ACTIVATE_URL}"
     message = render_to_string(
         "template_activate_account_pretty.html",

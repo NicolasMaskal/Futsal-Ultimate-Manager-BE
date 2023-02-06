@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "src.authentication",
+    "drf_spectacular",
     *THIRD_PARTY_APPS,
     *LOCAL_APPS,
 ]
@@ -170,11 +171,20 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "src.api.exception_handlers.custom_exception_handler",
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Futsal Ultimate Manager API",
+    "DESCRIPTION": "Welcome to Futsal Ultimate Manager.\nWith this game, you can build your ultimate team by creating your own squad and opening packs to acquire new players. Keep track of your team's progress by viewing your players and past matches. Test your team's mettle against our AI opponents by simulating matches.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
 }
 
 APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:8000")
-FE_DOMAIN=env("FE_DOMAIN")
-FE_EMAIL_ACTIVATE_URL=env("FE_EMAIL_ACTIVATE_URL")
+FE_DOMAIN = env("FE_DOMAIN")
+FE_EMAIL_ACTIVATE_URL = env("FE_EMAIL_ACTIVATE_URL")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

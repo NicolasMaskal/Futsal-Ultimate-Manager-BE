@@ -24,4 +24,5 @@ sentry-sdk==1.10.1
 
 names
 drf-nested-routers
+drf-spectacular
 
