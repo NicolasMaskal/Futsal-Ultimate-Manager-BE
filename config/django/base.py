@@ -38,7 +38,6 @@ LOCAL_APPS = [
     "src.tasks.apps.TasksConfig",
     "src.api.apps.ApiConfig",
     "src.users.apps.UsersConfig",
-    "src.emails.apps.EmailsConfig",
     "src.futsal_sim.apps.FutsalSimConfig",
 ]
 
