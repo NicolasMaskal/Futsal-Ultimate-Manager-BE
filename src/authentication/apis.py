@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
 from rest_framework import serializers, status
 from rest_framework.request import Request

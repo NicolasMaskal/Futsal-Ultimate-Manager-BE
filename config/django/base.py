@@ -179,7 +179,10 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Futsal Ultimate Manager API",
-    "DESCRIPTION": "Welcome to Futsal Ultimate Manager.\nWith this game, you can build your ultimate team by creating your own squad and opening packs to acquire new players. Keep track of your team's progress by viewing your players and past matches. Test your team's mettle against our AI opponents by simulating matches.",
+    "DESCRIPTION": "Welcome to Futsal Ultimate Manager.\nWith this game, you can build your ultimate team by creating "
+    "your own squad and opening packs to acquire new players. Keep track of your team's progress"
+    " by viewing your players and past matches. Test your team's mettle against our AI opponents"
+    " by simulating matches.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS

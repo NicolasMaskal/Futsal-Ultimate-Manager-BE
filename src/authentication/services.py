@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
@@ -9,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from src.users.models import User
 from src.users.serializers import UserOutputSerializer
 from src.users.tokens import account_activation_token
-from django.conf import settings
+
 
 def auth_user_get_jwt_secret_key(user: User) -> str:
     return str(user.jwt_key)
