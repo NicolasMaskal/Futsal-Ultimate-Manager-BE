@@ -25,14 +25,15 @@ def auth_jwt_response_payload_handler(token, user=None, request=None, issued_at=
     return {"user": user_serializer.data, "token": token}
 
 
-def activate_email(*, user: User):
-    mail_subject = "Activate your user account."
+def activate_email(*, user: User, team_name: str):
+    mail_subject = "Verify email for Futsal Ultimate Manager!"
     activation_url = f"{settings.FE_DOMAIN}{settings.FE_EMAIL_ACTIVATE_URL}"
     message = render_to_string(
-        "template_activate_account.html",
+        "template_activate_account_pretty.html",
         {
-            "user": user.username,
+            "team_name": team_name,
             "fe_activation_url": activation_url,
+            "fe_domain_url": settings.FE_DOMAIN,
             "uid": urlsafe_base64_encode(force_bytes(user.pk)),
             "token": account_activation_token.make_token(user),
             "protocol": "https" if settings.DEBUG else "http",
