@@ -5,7 +5,7 @@ from src.common.services import model_update
 from src.common.utils import find_or_fail
 from src.futsal_sim.constants import (
     BASE_COIN_AMOUNT,
-    PLAYER_AMOUNT_CREATED_TEAM,
+    CREATE_TEAM_PLAYER_AMOUNT_ABOVE_MIN,
     PLAYER_AMOUNT_TEAM_SHEET,
     SKILL_LOWER_BOUND_CREATED_TEAM,
     SKILL_UPPER_BOUND_CREATED_TEAM,
@@ -43,8 +43,9 @@ class TeamCRUDService:
         generator = PlayerFactory(
             team=team, lower_b=SKILL_LOWER_BOUND_CREATED_TEAM, upper_b=SKILL_UPPER_BOUND_CREATED_TEAM
         )
+        generator.create_players_for_each_pos()
 
-        generator.create_players(PLAYER_AMOUNT_CREATED_TEAM)
+        generator.create_players(CREATE_TEAM_PLAYER_AMOUNT_ABOVE_MIN)
 
         if not self.user.active_team:
             # self.user.active_team = team

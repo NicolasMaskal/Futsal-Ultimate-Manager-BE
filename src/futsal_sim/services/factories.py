@@ -125,29 +125,15 @@ class TeamOpponentFactory:
             lower_b=lower_b,
             upper_b=upper_b,
         )
-        right_attacker = player_generator.create_player(
-            player_position=PlayerPosition.ATTACKER, generate_with_history=True
-        )
-        left_attacker = player_generator.create_player(
-            player_position=PlayerPosition.ATTACKER, generate_with_history=True
-        )
-        right_defender = player_generator.create_player(
-            player_position=PlayerPosition.DEFENDER, generate_with_history=True
-        )
-        left_defender = player_generator.create_player(
-            player_position=PlayerPosition.DEFENDER, generate_with_history=True
-        )
-        goalkeeper = player_generator.create_player(
-            player_position=PlayerPosition.GOALKEEPER, generate_with_history=True
-        )
+        players_each_pos = player_generator.create_players_for_each_pos()
 
         lineup = TeamLineup(
             team=team,
-            right_attacker=right_attacker,
-            left_attacker=left_attacker,
-            right_defender=right_defender,
-            left_defender=left_defender,
-            goalkeeper=goalkeeper,
+            right_attacker=players_each_pos[0],
+            left_attacker=players_each_pos[1],
+            right_defender=players_each_pos[2],
+            left_defender=players_each_pos[3],
+            goalkeeper=players_each_pos[4],
         )
         lineup.save()
         return lineup
@@ -165,6 +151,32 @@ class PlayerFactory:
             player = self.create_player()
             players.append(player)
         return players
+
+    def create_players_for_each_pos(self) -> List[Player]:
+        """
+        :return: [right_attacker, left_attacker, right_defender, left_defender, goalkeeper]
+        """
+        player_generator = PlayerFactory(
+            team=self.team,
+            lower_b=self.skill_lower_b,
+            upper_b=self.skill_upper_b,
+        )
+        right_attacker = player_generator.create_player(
+            player_position=PlayerPosition.ATTACKER, generate_with_history=True
+        )
+        left_attacker = player_generator.create_player(
+            player_position=PlayerPosition.ATTACKER, generate_with_history=True
+        )
+        right_defender = player_generator.create_player(
+            player_position=PlayerPosition.DEFENDER, generate_with_history=True
+        )
+        left_defender = player_generator.create_player(
+            player_position=PlayerPosition.DEFENDER, generate_with_history=True
+        )
+        goalkeeper = player_generator.create_player(
+            player_position=PlayerPosition.GOALKEEPER, generate_with_history=True
+        )
+        return [right_attacker, left_attacker, right_defender, left_defender, goalkeeper]
 
     def create_player(self, *, generate_with_history: bool = False, player_position: Optional[PlayerPosition] = None):
         player_name = self.generate_random_name()
