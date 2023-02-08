@@ -17,30 +17,30 @@ The **Futsal Ultimate Manager** is a project consisting of a frontend built with
 while the backend code can be found here in this repo. 
 The backend follows the best practices specified in the 
 [Hacksoftware Style Guide](https://github.com/HackSoftware/Django-Styleguide). 
-Codebase was built on top of the Hacksoftware Cookiecutter Example[Hacksoftware Cookiecutter Example](https://github.com/HackSoftware/Django-Styleguide-Example).
+Codebase was built on top of the [Hacksoftware Cookiecutter Example](https://github.com/HackSoftware/Django-Styleguide-Example).
 
 # Code Overview
 - The project uses Python 3.10 and the Django Rest Framework.
 - The code is formatted using [Black](https://github.com/psf/black). and imports are organized using [Isort](https://pycqa.github.io/isort/).
-- Type checking is done using [mypy](http://mypy-lang.org/)
+- Type checking is done using [mypy](http://mypy-lang.org/).
 - Project uses [Github actions](https://github.com/Nicolas264859/Futsal-Sim-BE/actions/workflows/django.yml) to run code checkers and tests.
 
 # Deployment
-The project is hosted on Digital Ocean's app platform and is automatically deployed on a commit to the deploy branch. The deployed version 
-contains built React files which it serves statically using gunicorn and whitenoise.
+The project is hosted on DigitalOcean's App Platform, and a commit to the deploy branch triggers a deployment. 
+The deployed version contains built React files, which are served statically using gunicorn and whitenoise.
 
 # Other Information
 API documentation can be found at:
 - [Swagger-ui (Contains only BE endpoints)](https://futsal-manager.tech/api/schema/swagger-ui/).
 - [Redoc (Contains only BE endpoints)](https://futsal-manager.tech/api/schema/redoc/).
 
-For **authorization**, the backend supports both HTTP-only cookies and JWT tokens.
+For **authorization**, the backend supports both **HTTP-only cookies** and **JWT tokens**.
 
 
 I used **Docker** during local development, so I could have a postgresql database locally. 
 
 
-Email sending is done using a Gmail backend.
+Email sending is done by using a simple **Gmail backend**.
 
 Constants used for match/team/player/pack generation can be found [here](https://github.com/Nicolas264859/Futsal-Sim-BE/blob/master/src/futsal_sim/constants.py)
 
