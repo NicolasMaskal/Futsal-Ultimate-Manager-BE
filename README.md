@@ -10,7 +10,7 @@
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 
-**Link to site**: https://www.futsal-manager.tech
+**Link to site**: https://www.futsal-manager.tech (Note: Feel free to use a tmp mail when trying it out: https://mail.tm/en/)
 
 The **Futsal Ultimate Manager** is a project consisting of a frontend built with React Typescript and a backend built with Django. The frontend code can be found on [Github](https://github.com/Nicolas264859/Futsal-sim-FE), 
 while the backend code can be found here in this repo. 
