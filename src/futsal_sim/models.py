@@ -35,6 +35,15 @@ class Team(BaseModel):
     def matches_played(self) -> int:
         return self.wins + self.draws + self.loses
 
+    @property
+    def is_cpu(self) -> bool:
+        return self.owner is None
+
+    def __str__(self):
+        if self.is_cpu:
+            return self.name + " (CPU)"
+        return self.name
+
 
 class CPUTeam(Team):
     skill = models.IntegerField(validators=[MinValueValidator(MIN_PLAYER_SKILL)])
