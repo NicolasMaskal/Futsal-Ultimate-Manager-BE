@@ -5,6 +5,7 @@
 # Basic info about the project
 [![Lint & test](https://github.com/Nicolas264859/Futsal-Sim-BE/actions/workflows/django.yml/badge.svg)](https://github.com/Nicolas264859/Futsal-Sim-BE/actions/workflows/django.yml)
 [![python](https://img.shields.io/badge/Python-3.10-3776AB.svg?style=flat&logo=python&logoColor=white)](https://www.python.org)
+[![django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
@@ -18,8 +19,8 @@ The backend follows the best practices specified in the
 Codebase was built on top of the [Hacksoftware Cookiecutter Example](https://github.com/HackSoftware/Django-Styleguide-Example).
 
 # Code Overview
-- The project uses Python 3.10 and the Django Rest Framework.
-- The code is formatted using [Black](https://github.com/psf/black). and imports are organized using [Isort](https://pycqa.github.io/isort/).
+- The project uses **Python 3.10** and the **Django Rest Framework**.
+- The code is formatted using [Black](https://github.com/psf/black). and imports are organized by [Isort](https://pycqa.github.io/isort/).
 - Type checking is done using [mypy](http://mypy-lang.org/).
 - Project uses [Github actions](https://github.com/Nicolas264859/Futsal-Sim-BE/actions/workflows/django.yml) to run code checkers and tests.
 
