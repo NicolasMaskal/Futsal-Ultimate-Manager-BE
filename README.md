@@ -1,6 +1,4 @@
 # Futsal Ultimate Manager (Backend - Django)
-
-# Social
 [![Nico linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/nicolasmaskal/)
 [![Nico github](https://img.shields.io/badge/GitHub-Nicolas264859-181717.svg?style=flat&logo=github)](https://github.com/Nicolas264859)
 
