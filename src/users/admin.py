@@ -7,15 +7,24 @@ from src.users.services import user_create
 
 @admin.register(User)
 class BaseUserAdmin(admin.ModelAdmin):
-    list_display = ("email", "is_admin", "is_superuser", "is_active", "created_at", "updated_at")
+    list_display = (
+        "email",
+        "is_admin",
+        "is_superuser",
+        "is_active",
+        "created_at",
+        "updated_at",
+        "email_verified",
+        "active_team",
+    )
 
     search_fields = ("email",)
 
     list_filter = ("is_active", "is_admin", "is_superuser")
 
     fieldsets = (
-        (None, {"fields": ("email",)}),
-        ("Booleans", {"fields": ("is_active", "is_admin", "is_superuser")}),
+        (None, {"fields": ("email", "active_team")}),
+        ("Booleans", {"fields": ("is_active", "is_admin", "is_superuser", "email_verified")}),
         ("Timestamps", {"fields": ("created_at", "updated_at")}),
     )
 
